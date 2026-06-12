@@ -46,3 +46,14 @@ def test_recent_images_dedup_and_cap(temp_settings):
     assert len(recent) == 10
     assert recent[0] == "/fw/0.elf"
     assert len(set(recent)) == len(recent)
+
+
+def test_recent_goto_dedup_and_cap(temp_settings):
+    assert temp_settings.recent_goto_addresses == []
+    for i in range(8):
+        temp_settings.push_recent_goto(f"0x{0x0800_0000 + i * 0x100:08X}")
+    temp_settings.push_recent_goto("0x08000000")  # move to front, no dup
+    recent = temp_settings.recent_goto_addresses
+    assert len(recent) == 5  # capped at 5
+    assert recent[0] == "0x08000000"
+    assert len(set(recent)) == len(recent)

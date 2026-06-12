@@ -1,0 +1,3292 @@
+{
+ "pyocd_version": "0.44.1",
+ "status": 0,
+ "targets": [
+  {
+   "name": "mps2_an521",
+   "part_families": [],
+   "part_number": "AN521",
+   "source": "builtin",
+   "vendor": "Arm"
+  },
+  {
+   "name": "mps3_an522",
+   "part_families": [],
+   "part_number": "AN522",
+   "source": "builtin",
+   "vendor": "Arm"
+  },
+  {
+   "name": "mps3_an540",
+   "part_families": [],
+   "part_number": "AN540",
+   "source": "builtin",
+   "vendor": "Arm"
+  },
+  {
+   "name": "cortex_m",
+   "part_families": [],
+   "part_number": "CoreSightTarget",
+   "source": "builtin",
+   "vendor": "Generic"
+  },
+  {
+   "name": "kinetis",
+   "part_families": [],
+   "part_number": "Kinetis",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "ke15z7",
+   "part_families": [],
+   "part_number": "KE15Z7",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "ke17z7",
+   "part_families": [],
+   "part_number": "KE17Z7",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "ke18f16",
+   "part_families": [],
+   "part_number": "KE18F16",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl02z",
+   "part_families": [],
+   "part_number": "KL02Z",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl05z",
+   "part_families": [],
+   "part_number": "KL05Z",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl25z",
+   "part_families": [],
+   "part_number": "KL25Z",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl26z",
+   "part_families": [],
+   "part_number": "KL26Z",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl27z4",
+   "part_families": [],
+   "part_number": "KL27Z4",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl28z",
+   "part_families": [],
+   "part_number": "KL28x",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl43z4",
+   "part_families": [],
+   "part_number": "KL43Z4",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl46z",
+   "part_families": [],
+   "part_number": "KL46Z",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kl82z7",
+   "part_families": [],
+   "part_number": "KL82Z7",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kv10z7",
+   "part_families": [],
+   "part_number": "KV10Z7",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kv11z7",
+   "part_families": [],
+   "part_number": "KV11Z7",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kw01z4",
+   "part_families": [],
+   "part_number": "KW01Z4",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kw24d5",
+   "part_families": [],
+   "part_number": "KW24D5",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kw36z4",
+   "part_families": [],
+   "part_number": "KW36Z4",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kw40z4",
+   "part_families": [],
+   "part_number": "KW40Z4",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "kw41z4",
+   "part_families": [],
+   "part_number": "KW41Z4",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k20d50m",
+   "part_families": [],
+   "part_number": "K20D50M",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k22fa12",
+   "part_families": [],
+   "part_number": "K22FA12",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k22f",
+   "part_families": [],
+   "part_number": "K22F",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k28f15",
+   "part_families": [],
+   "part_number": "K28F15",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k64f",
+   "part_families": [],
+   "part_number": "K64F",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k66f18",
+   "part_families": [],
+   "part_number": "K66F18",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k82f25615",
+   "part_families": [],
+   "part_number": "K82F25615",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k32w042s",
+   "part_families": [],
+   "part_number": "K32W042S",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "k32l2b3",
+   "part_families": [],
+   "part_number": "K32L2B3",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc800",
+   "part_families": [],
+   "part_number": "LPC800",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc845",
+   "part_families": [],
+   "part_number": "LPC845",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc11u24",
+   "part_families": [],
+   "part_number": "LPC11U24",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc1768",
+   "part_families": [],
+   "part_number": "LPC1768",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc4330",
+   "part_families": [],
+   "part_number": "LPC4330",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "max32600",
+   "part_families": [],
+   "part_number": "MAX32600",
+   "source": "builtin",
+   "vendor": "Maxim"
+  },
+  {
+   "name": "max32620",
+   "part_families": [],
+   "part_number": "MAX32620",
+   "source": "builtin",
+   "vendor": "Maxim"
+  },
+  {
+   "name": "max32625",
+   "part_families": [],
+   "part_number": "MAX32625",
+   "source": "builtin",
+   "vendor": "Maxim"
+  },
+  {
+   "name": "max32630",
+   "part_families": [],
+   "part_number": "MAX32630",
+   "source": "builtin",
+   "vendor": "Maxim"
+  },
+  {
+   "name": "max32660",
+   "part_families": [],
+   "part_number": "MAX32660",
+   "source": "builtin",
+   "vendor": "Maxim"
+  },
+  {
+   "name": "max32666",
+   "part_families": [],
+   "part_number": "MAX32666",
+   "source": "builtin",
+   "vendor": "Maxim"
+  },
+  {
+   "name": "max32670",
+   "part_families": [],
+   "part_number": "MAX32670",
+   "source": "builtin",
+   "vendor": "Maxim"
+  },
+  {
+   "name": "mimxrt1010",
+   "part_families": [],
+   "part_number": "MIMXRT1011xxxxx",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1015",
+   "part_families": [],
+   "part_number": "MIMXRT1015xxxxx",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1020",
+   "part_families": [],
+   "part_number": "MIMXRT1021xxxxx",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1024",
+   "part_families": [],
+   "part_number": "MIMXRT1024xxxxx",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1050_quadspi",
+   "part_families": [],
+   "part_number": "MIMXRT1052xxxxB_quadspi",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1050_hyperflash",
+   "part_families": [],
+   "part_number": "MIMXRT1052xxxxB_hyperflash",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1050",
+   "part_families": [],
+   "part_number": "MIMXRT1052xxxxB_hyperflash",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1060",
+   "part_families": [],
+   "part_number": "MIMXRT1062xxxxA",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1064",
+   "part_families": [],
+   "part_number": "MIMXRT1064xxxxA",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1170_cm7",
+   "part_families": [],
+   "part_number": "MIMXRT1176xxxxx_CM7",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "mimxrt1170_cm4",
+   "part_families": [],
+   "part_number": "MIMXRT1176xxxxx_CM4",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "nrf51",
+   "part_families": [],
+   "part_number": "NRF51",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf51822",
+   "part_families": [],
+   "part_number": "NRF51",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf52",
+   "part_families": [],
+   "part_number": "NRF52832",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf52832",
+   "part_families": [],
+   "part_number": "NRF52832",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf52833",
+   "part_families": [],
+   "part_number": "NRF52833",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf52840",
+   "part_families": [],
+   "part_number": "NRF52840",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf91",
+   "part_families": [],
+   "part_number": "NRF91XX",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf54l",
+   "part_families": [],
+   "part_number": "NRF54L15",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "nrf54lm20a",
+   "part_families": [],
+   "part_number": "NRF54LM20A",
+   "source": "builtin",
+   "vendor": "Nordic Semiconductor"
+  },
+  {
+   "name": "s32k344",
+   "part_families": [],
+   "part_number": "S32K344",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "stm32f103rc",
+   "part_families": [],
+   "part_number": "STM32F103RC",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051",
+   "part_families": [],
+   "part_number": "STM32F051",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f412xe",
+   "part_families": [],
+   "part_number": "STM32F412xE",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f412xg",
+   "part_families": [],
+   "part_number": "STM32F412xG",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f429xg",
+   "part_families": [],
+   "part_number": "STM32F429xG",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f429xi",
+   "part_families": [],
+   "part_number": "STM32F429xI",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f439xg",
+   "part_families": [],
+   "part_number": "STM32F439xG",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f439xi",
+   "part_families": [],
+   "part_number": "STM32F439xI",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f767zi",
+   "part_families": [],
+   "part_number": "STM32F767xx",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32l432kc",
+   "part_families": [],
+   "part_number": "STM32L432xC",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32l475xc",
+   "part_families": [],
+   "part_number": "STM32L475xC",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32l475xe",
+   "part_families": [],
+   "part_number": "STM32L475xE",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32l475xg",
+   "part_families": [],
+   "part_number": "STM32L475xG",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32l031x6",
+   "part_families": [],
+   "part_number": "STM32L031x6",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32h723xx",
+   "part_families": [],
+   "part_number": "STM32H723xx",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32h743xx",
+   "part_families": [],
+   "part_number": "STM32H743xx",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32h750xx",
+   "part_families": [],
+   "part_number": "STM32H750xx",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32h7b0xx",
+   "part_families": [],
+   "part_number": "STM32H7B0xx",
+   "source": "builtin",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "w7500",
+   "part_families": [],
+   "part_number": "W7500",
+   "source": "builtin",
+   "vendor": "WIZnet"
+  },
+  {
+   "name": "s5js100",
+   "part_families": [],
+   "part_number": "S5JS100",
+   "source": "builtin",
+   "vendor": "Samsung"
+  },
+  {
+   "name": "lpc11xx_32",
+   "part_families": [],
+   "part_number": "LPC11XX_32",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc824",
+   "part_families": [],
+   "part_number": "LPC824",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc54114",
+   "part_families": [],
+   "part_number": "LPC54114",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc54608",
+   "part_families": [],
+   "part_number": "LPC54608",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc4088",
+   "part_families": [],
+   "part_number": "LPC4088",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "ncs36510",
+   "part_families": [],
+   "part_number": "NCS36510",
+   "source": "builtin",
+   "vendor": "ONSemiconductor"
+  },
+  {
+   "name": "lpc4088qsb",
+   "part_families": [],
+   "part_number": "LPC4088qsb",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc4088dm",
+   "part_families": [],
+   "part_number": "LPC4088dm",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "rtl8195am",
+   "part_families": [],
+   "part_number": "RTL8195AM",
+   "source": "builtin",
+   "vendor": "Realtek Semiconductor"
+  },
+  {
+   "name": "rtl8762c",
+   "part_families": [],
+   "part_number": "RTL8762C",
+   "source": "builtin",
+   "vendor": "Realtek Semiconductor"
+  },
+  {
+   "name": "cc3220sf",
+   "part_families": [],
+   "part_number": "CC3220SF",
+   "source": "builtin",
+   "vendor": "Texas Instruments"
+  },
+  {
+   "name": "cy8c6xxa",
+   "part_families": [],
+   "part_number": "CY8C6xxA",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c6xx7",
+   "part_families": [],
+   "part_number": "CY8C6xx7",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c6xx7_s25fs512s",
+   "part_families": [],
+   "part_number": "CY8C6xx7_S25FS512S",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c6xx7_nosmif",
+   "part_families": [],
+   "part_number": "CY8C6xx7_nosmif",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c6xx5",
+   "part_families": [],
+   "part_number": "CY8C6xx5",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64_sysap",
+   "part_families": [],
+   "part_number": "cy8c64_sysap",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xx_cm0",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm0",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xx_cm4",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm4",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xx_cm0_s25hx512t",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm0_s25hx512t",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xx_cm4_s25hx512t",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm4_s25hx512t",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xx_cm0_nosmif",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm0_nosmif",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xx_cm4_nosmif",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm4_nosmif",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xa_cm0",
+   "part_families": [],
+   "part_number": "cy8c64xA_cm0",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xa_cm4",
+   "part_families": [],
+   "part_number": "cy8c64xA_cm4",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64x5_cm0",
+   "part_families": [],
+   "part_number": "cy8c64x5_cm0",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64x5_cm4",
+   "part_families": [],
+   "part_number": "cy8c64x5_cm4",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "musca_a1",
+   "part_families": [],
+   "part_number": "MuscaA1",
+   "source": "builtin",
+   "vendor": "Arm"
+  },
+  {
+   "name": "musca_b1",
+   "part_families": [],
+   "part_number": "MuscaB1",
+   "source": "builtin",
+   "vendor": "Arm"
+  },
+  {
+   "name": "musca_s1",
+   "part_families": [],
+   "part_number": "MuscaS1",
+   "source": "builtin",
+   "vendor": "Arm"
+  },
+  {
+   "name": "lpc5526",
+   "part_families": [],
+   "part_number": "LPC5526",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc55s69",
+   "part_families": [],
+   "part_number": "LPC55S69",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc55s16",
+   "part_families": [],
+   "part_number": "LPC55S16",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc55s36",
+   "part_families": [],
+   "part_number": "LPC55S36",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "lpc55s28",
+   "part_families": [],
+   "part_number": "LPC55S28",
+   "source": "builtin",
+   "vendor": "NXP"
+  },
+  {
+   "name": "cy8c64xx_cm0_full_flash",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm0_full_flash",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xx_cm4_full_flash",
+   "part_families": [],
+   "part_number": "cy8c64xx_cm4_full_flash",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xa_cm0_full_flash",
+   "part_families": [],
+   "part_number": "cy8c64xA_cm0_full_flash",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64xa_cm4_full_flash",
+   "part_families": [],
+   "part_number": "cy8c64xA_cm4_full_flash",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64x5_cm0_full_flash",
+   "part_families": [],
+   "part_number": "cy8c64x5_cm0_full_flash",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "cy8c64x5_cm4_full_flash",
+   "part_families": [],
+   "part_number": "cy8c64x5_cm4_full_flash",
+   "source": "builtin",
+   "vendor": "Cypress"
+  },
+  {
+   "name": "m252kg6ae",
+   "part_families": [],
+   "part_number": "M252KG6AE",
+   "source": "builtin",
+   "vendor": "Nuvoton"
+  },
+  {
+   "name": "m263kiaae",
+   "part_families": [],
+   "part_number": "M263KIAAE",
+   "source": "builtin",
+   "vendor": "Nuvoton"
+  },
+  {
+   "name": "m467hjhae",
+   "part_families": [],
+   "part_number": "M467HJHAE",
+   "source": "builtin",
+   "vendor": "Nuvoton"
+  },
+  {
+   "name": "m487jidae",
+   "part_families": [],
+   "part_number": "M487JIDAE",
+   "source": "builtin",
+   "vendor": "Nuvoton"
+  },
+  {
+   "name": "m2354kjfae",
+   "part_families": [],
+   "part_number": "M2354KJFAE",
+   "source": "builtin",
+   "vendor": "Nuvoton"
+  },
+  {
+   "name": "hc32f334x8",
+   "part_families": [],
+   "part_number": "HC32F334x8",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f334xa",
+   "part_families": [],
+   "part_number": "HC32F334xA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f334",
+   "part_families": [],
+   "part_number": "HC32F334xA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f448xa",
+   "part_families": [],
+   "part_number": "HC32F448xA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f448xc",
+   "part_families": [],
+   "part_number": "HC32F448xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f448",
+   "part_families": [],
+   "part_number": "HC32F448xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32a448xa",
+   "part_families": [],
+   "part_number": "HC32F448xA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32a448xc",
+   "part_families": [],
+   "part_number": "HC32F448xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32a448",
+   "part_families": [],
+   "part_number": "HC32F448xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f451xc",
+   "part_families": [],
+   "part_number": "HC32F451xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f451xe",
+   "part_families": [],
+   "part_number": "HC32F451xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f451",
+   "part_families": [],
+   "part_number": "HC32F451xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f452xc",
+   "part_families": [],
+   "part_number": "HC32F452xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f452xe",
+   "part_families": [],
+   "part_number": "HC32F452xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f452",
+   "part_families": [],
+   "part_number": "HC32F452xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f460xc",
+   "part_families": [],
+   "part_number": "HC32F460xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f460xe",
+   "part_families": [],
+   "part_number": "HC32F460xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f460",
+   "part_families": [],
+   "part_number": "HC32F460xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32a460xe",
+   "part_families": [],
+   "part_number": "HC32F460xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32a460",
+   "part_families": [],
+   "part_number": "HC32F460xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f467xg",
+   "part_families": [],
+   "part_number": "HC32F467xG",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f467",
+   "part_families": [],
+   "part_number": "HC32F467xG",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f472xc",
+   "part_families": [],
+   "part_number": "HC32F472xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f472xe",
+   "part_families": [],
+   "part_number": "HC32F472xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f472",
+   "part_families": [],
+   "part_number": "HC32F472xE",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f4a0xg",
+   "part_families": [],
+   "part_number": "HC32F4A0xG",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f4a0xi",
+   "part_families": [],
+   "part_number": "HC32F4A0xI",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f4a0",
+   "part_families": [],
+   "part_number": "HC32F4A0xI",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32a4a0xi",
+   "part_families": [],
+   "part_number": "HC32F4A0xI",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32a4a0",
+   "part_families": [],
+   "part_number": "HC32F4A0xI",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f4a2xi",
+   "part_families": [],
+   "part_number": "HC32F4A0xI",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f4a2",
+   "part_families": [],
+   "part_number": "HC32F4A0xI",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32m423xa",
+   "part_families": [],
+   "part_number": "HC32M423xA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f120x6",
+   "part_families": [],
+   "part_number": "HC32F120x6TA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f120x8",
+   "part_families": [],
+   "part_number": "HC32F120x8TA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f120",
+   "part_families": [],
+   "part_number": "HC32F120x8TA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32m120x6",
+   "part_families": [],
+   "part_number": "HC32M120",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32m120",
+   "part_families": [],
+   "part_number": "HC32M120",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f115x8",
+   "part_families": [],
+   "part_number": "HC32F115x8",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f115",
+   "part_families": [],
+   "part_number": "HC32F115x8",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f155xa",
+   "part_families": [],
+   "part_number": "HC32F155xA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f155xc",
+   "part_families": [],
+   "part_number": "HC32F155xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f155",
+   "part_families": [],
+   "part_number": "HC32F155xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f160xa",
+   "part_families": [],
+   "part_number": "HC32F160xA",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f160xc",
+   "part_families": [],
+   "part_number": "HC32F160xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f160",
+   "part_families": [],
+   "part_number": "HC32F160xC",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32l110",
+   "part_families": [],
+   "part_number": "HC32L110",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f003",
+   "part_families": [],
+   "part_number": "HC32F003",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f005",
+   "part_families": [],
+   "part_number": "HC32F005",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32l136",
+   "part_families": [],
+   "part_number": "HC32L136",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32l130",
+   "part_families": [],
+   "part_number": "HC32L130",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f030",
+   "part_families": [],
+   "part_number": "HC32F030",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32l196",
+   "part_families": [],
+   "part_number": "HC32L196",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32l190",
+   "part_families": [],
+   "part_number": "HC32L190",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f196",
+   "part_families": [],
+   "part_number": "HC32F196",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f190",
+   "part_families": [],
+   "part_number": "HC32F190",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32l072",
+   "part_families": [],
+   "part_number": "HC32L072",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32l073",
+   "part_families": [],
+   "part_number": "HC32L073",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "hc32f072",
+   "part_families": [],
+   "part_number": "HC32F072",
+   "source": "builtin",
+   "vendor": "HDSC"
+  },
+  {
+   "name": "rp2040",
+   "part_families": [],
+   "part_number": "RP2040Core0",
+   "source": "builtin",
+   "vendor": "Raspberry Pi"
+  },
+  {
+   "name": "rp2040_core0",
+   "part_families": [],
+   "part_number": "RP2040Core0",
+   "source": "builtin",
+   "vendor": "Raspberry Pi"
+  },
+  {
+   "name": "rp2040_core1",
+   "part_families": [],
+   "part_number": "RP2040Core1",
+   "source": "builtin",
+   "vendor": "Raspberry Pi"
+  },
+  {
+   "name": "rp2350",
+   "part_families": [],
+   "part_number": "RP2350",
+   "source": "builtin",
+   "vendor": "Raspberry Pi"
+  },
+  {
+   "name": "ytm32b1ld0",
+   "part_families": [],
+   "part_number": "YTM32B1LD0",
+   "source": "builtin",
+   "vendor": "Yuntu Microelectronics"
+  },
+  {
+   "name": "ytm32b1le0",
+   "part_families": [],
+   "part_number": "YTM32B1LE0",
+   "source": "builtin",
+   "vendor": "Yuntu Microelectronics"
+  },
+  {
+   "name": "ytm32b1me0",
+   "part_families": [],
+   "part_number": "YTM32B1ME0",
+   "source": "builtin",
+   "vendor": "YTMicro"
+  },
+  {
+   "name": "ytm32b1md1",
+   "part_families": [],
+   "part_number": "YTM32B1MD1",
+   "source": "builtin",
+   "vendor": "Yuntu Microelectronics"
+  },
+  {
+   "name": "air001",
+   "part_families": [],
+   "part_number": "Air001",
+   "source": "builtin",
+   "vendor": "AirM2M"
+  },
+  {
+   "name": "air32f103xb",
+   "part_families": [],
+   "part_number": "Air32F103xB",
+   "source": "builtin",
+   "vendor": "AirM2M"
+  },
+  {
+   "name": "air32f103xc",
+   "part_families": [],
+   "part_number": "Air32F103xC",
+   "source": "builtin",
+   "vendor": "AirM2M"
+  },
+  {
+   "name": "air32f103xp",
+   "part_families": [],
+   "part_number": "Air32F103xP",
+   "source": "builtin",
+   "vendor": "AirM2M"
+  },
+  {
+   "name": "air32f103xe",
+   "part_families": [],
+   "part_number": "Air32F103xE",
+   "source": "builtin",
+   "vendor": "AirM2M"
+  },
+  {
+   "name": "air32f103xg",
+   "part_families": [],
+   "part_number": "Air32F103xG",
+   "source": "builtin",
+   "vendor": "AirM2M"
+  },
+  {
+   "name": "ama3b1kk_kbr",
+   "part_families": [],
+   "part_number": "AMA3B1KK_KBR",
+   "source": "builtin",
+   "vendor": "Ambiq Micro"
+  },
+  {
+   "name": "stm32f030c6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030C6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030c6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030C6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030c8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030C8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030c8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030C8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030cc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030CC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030cctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030CCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030f4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030F4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030f4px",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030F4Px",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030k6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030K6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030k6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030K6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030r8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030R8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030r8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030R8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030rc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030RC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f030rctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F030"
+   ],
+   "part_number": "STM32F030RCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031c4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031C4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031c4tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031C4Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031c6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031C6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031c6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031C6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031e6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031E6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031e6yx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031E6Yx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031f4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031F4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031f4px",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031F4Px",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031f6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031F6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031f6px",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031F6Px",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031g4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031G4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031g4ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031G4Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031g6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031G6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031g6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031G6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031k4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031K4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031k4ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031K4Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031k6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031K6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031k6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031K6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f031k6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F031"
+   ],
+   "part_number": "STM32F031K6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038c6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038C6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038c6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038C6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038e6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038E6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038e6yx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038E6Yx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038f6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038F6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038f6px",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038F6Px",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038g6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038G6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038g6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038G6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038k6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038K6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f038k6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F038"
+   ],
+   "part_number": "STM32F038K6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042c4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042C4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042c4tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042C4Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042c4ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042C4Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042c6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042C6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042c6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042C6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042c6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042C6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042f4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042F4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042f4px",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042F4Px",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042f6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042F6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042f6px",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042F6Px",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042g4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042G4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042g4ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042G4Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042g6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042G6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042g6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042G6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042k4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042K4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042k4tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042K4Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042k4ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042K4Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042k6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042K6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042k6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042K6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042k6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042K6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042t6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042T6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f042t6yx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F042"
+   ],
+   "part_number": "STM32F042T6Yx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f048c6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F048"
+   ],
+   "part_number": "STM32F048C6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f048c6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F048"
+   ],
+   "part_number": "STM32F048C6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f048g6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F048"
+   ],
+   "part_number": "STM32F048G6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f048g6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F048"
+   ],
+   "part_number": "STM32F048G6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f048t6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F048"
+   ],
+   "part_number": "STM32F048T6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f048t6yx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F048"
+   ],
+   "part_number": "STM32F048T6Yx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c4tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C4Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c4ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C4Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051c8ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051C8Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k4tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K4Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k4ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K4Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k6ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K6Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051k8ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051K8Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051r4",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051R4",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051r4tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051R4Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051r6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051R6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051r6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051R6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051r8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051R8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051r8hx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051R8Hx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051r8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051R8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051t8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051T8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f051t8yx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F051"
+   ],
+   "part_number": "STM32F051T8Yx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f058c8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F058"
+   ],
+   "part_number": "STM32F058C8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f058c8ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F058"
+   ],
+   "part_number": "STM32F058C8Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f058r8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F058"
+   ],
+   "part_number": "STM32F058R8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f058r8hx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F058"
+   ],
+   "part_number": "STM32F058R8Hx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f058r8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F058"
+   ],
+   "part_number": "STM32F058R8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f058t8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F058"
+   ],
+   "part_number": "STM32F058T8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f058t8yx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F058"
+   ],
+   "part_number": "STM32F058T8Yx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070c6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070C6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070c6tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070C6Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070cb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070CB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070cbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070CBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070f6",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070F6",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070f6px",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070F6Px",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070rb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070RB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f070rbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F070"
+   ],
+   "part_number": "STM32F070RBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071c8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071C8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071c8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071C8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071c8ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071C8Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071cb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071CB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071cbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071CBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071cbux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071CBUx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071cbyx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071CBYx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071rb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071RB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071rbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071RBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071v8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071V8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071v8hx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071V8Hx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071v8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071V8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071vb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071VB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071vbhx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071VBHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f071vbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F071"
+   ],
+   "part_number": "STM32F071VBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072c8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072C8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072c8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072C8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072c8ux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072C8Ux",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072cb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072CB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072cbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072CBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072cbux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072CBUx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072cbyx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072CBYx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072r8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072R8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072r8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072R8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072rb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072RB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072rbhx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072RBHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072rbix",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072RBIx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072rbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072RBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072v8",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072V8",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072v8hx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072V8Hx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072v8tx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072V8Tx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072vb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072VB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072vbhx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072VBHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f072vbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F072"
+   ],
+   "part_number": "STM32F072VBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078cb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078CB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078cbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078CBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078cbux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078CBUx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078cbyx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078CBYx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078rb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078RB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078rbhx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078RBHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078rbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078RBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078vb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078VB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078vbhx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078VBHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f078vbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F078"
+   ],
+   "part_number": "STM32F078VBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091cb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091CB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091cbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091CBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091cbux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091CBUx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091cc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091CC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091cctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091CCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091ccux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091CCUx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091rb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091RB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091rbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091RBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091rc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091RC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091rchx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091RCHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091rctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091RCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091rcyx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091RCYx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091vb",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091VB",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091vbtx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091VBTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091vc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091VC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091vchx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091VCHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f091vctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F091"
+   ],
+   "part_number": "STM32F091VCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098cc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098CC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098cctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098CCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098ccux",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098CCUx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098rc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098RC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098rchx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098RCHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098rctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098RCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098rcyx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098RCYx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098vc",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098VC",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098vchx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098VCHx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  },
+  {
+   "name": "stm32f098vctx",
+   "part_families": [
+    "STM32F0 Series",
+    "STM32F098"
+   ],
+   "part_number": "STM32F098VCTx",
+   "source": "pack",
+   "vendor": "STMicroelectronics"
+  }
+ ],
+ "version": {
+  "major": 1,
+  "minor": 2
+ }
+}

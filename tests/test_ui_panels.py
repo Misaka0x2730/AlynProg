@@ -198,3 +198,28 @@ def test_connect_panel_lists_fake_probe(qtbot, controller, temp_settings):
         if panel._probe_box.itemData(i) is not None
     }
     assert "fake" in backends
+
+
+def test_hexview_goto_remembers_recent_addresses(qtbot, controller, temp_settings):
+    from alynprog.ui.panels.hexview import HexView
+
+    view = HexView(controller, temp_settings)
+    qtbot.addWidget(view)
+    _attach_fake(controller, qtbot)
+    qtbot.wait(50)
+
+    # Navigate to an address inside the fake flash region (starts at 0x08000000).
+    view._goto.setEditText("0x08000100")
+    view._on_goto()
+    assert "0x08000100" in temp_settings.recent_goto_addresses
+    assert "0x08000100" in [view._goto.itemText(i) for i in range(view._goto.count())]
+
+    # A second address goes to the front of the recents dropdown.
+    view._goto.setEditText("0x08000200")
+    view._on_goto()
+    assert temp_settings.recent_goto_addresses[0] == "0x08000200"
+
+    # An invalid address is reported but not remembered.
+    view._goto.setEditText("not-hex")
+    view._on_goto()
+    assert "not-hex" not in temp_settings.recent_goto_addresses

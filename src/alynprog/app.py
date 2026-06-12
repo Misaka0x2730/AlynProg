@@ -30,8 +30,19 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def _start_pyocd_prewarm() -> None:
+    """Warm pyOCD's heavy import on a daemon thread so the first probe scan isn't a GUI stall."""
+    import threading
+
+    from alynprog.backends.pyocd._api import prewarm, pyocd_available
+
+    if pyocd_available():
+        threading.Thread(target=prewarm, name="pyocd-prewarm", daemon=True).start()
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parse_args(argv)
+    _start_pyocd_prewarm()
 
     app = QApplication(sys.argv if argv is None else [sys.argv[0], *argv])
     app.setApplicationName(APP_NAME)

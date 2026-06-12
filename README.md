@@ -11,7 +11,9 @@ What it can do:
 - Flash ELF / HEX / BIN firmware images; full and sector erase.
 - Live operation log.
 - Light / dark / system themes (PySide6 / Qt 6 UI).
-- Probe abstraction designed for more backends later (OpenOCD, pyOCD).
+- Optional **pyOCD** backend (native, in-process) for CMSIS-DAP / ST-Link / J-Link / picoprobe — no
+  external GDB needed. Pick the target from a searchable dialog sourced from pyOCD's own database.
+- Probe abstraction designed for more backends later (OpenOCD).
 
 > Status: early development.
 
@@ -34,6 +36,29 @@ To explore the UI without any hardware (uses a built-in simulated target):
 ```sh
 uv run alynprog --fake
 ```
+
+### pyOCD backend (optional)
+
+For CMSIS-DAP / ST-Link / J-Link / picoprobe debuggers, install the optional `pyocd` extra:
+
+```sh
+uv sync --extra pyocd        # or: pip install 'alynprog[pyocd]'
+```
+
+Use **Python 3.11–3.13** for this extra: `libusb-package` has no cp314 wheel yet, so on 3.14 it is
+built from source (needs a C toolchain). On Linux, CMSIS-DAP probes need udev rules (see
+[pyOCD's docs](https://pyocd.io/docs/installing.html)).
+
+pyOCD can't auto-detect the chip, so after selecting a pyOCD probe you choose the **target** from a
+searchable dialog (filter by vendor and family). The list comes from pyOCD's own database. If your
+chip isn't listed, install its CMSIS pack and click **Refresh**:
+
+```sh
+uv run pyocd pack install stm32f103cb   # example: medium-density STM32F103 (blue pill)
+```
+
+Pick the target that matches your exact part — e.g. a common blue-pill is *medium-density*
+`stm32f103cb`, not the high-density `stm32f103rc` that ships builtin; a mismatch fails to program.
 
 ### Linux: USB access for Black Magic Probe
 

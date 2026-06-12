@@ -10,6 +10,7 @@ from __future__ import annotations
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QComboBox,
+    QDialog,
     QFileDialog,
     QFormLayout,
     QGroupBox,
@@ -19,6 +20,7 @@ from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QPushButton,
+    QSizePolicy,
     QSpinBox,
     QVBoxLayout,
     QWidget,
@@ -45,6 +47,12 @@ class ConnectPanel(QWidget):
         self._settings = settings
         self._use_fake = use_fake
         self._prev_state = session.state
+        self._chosen_target = ""  # pyOCD target name chosen via the picker dialog
+        self._pending_autoattach = False  # auto-attach the single pyOCD target after a connect
+
+        # Size to content height (don't grab extra vertical space) so the dock fits the panel and
+        # the stacked Log dock takes the rest — notably when the Targets box is hidden for pyOCD.
+        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
         self._build_ui()
         self._wire_session()
@@ -119,15 +127,33 @@ class ConnectPanel(QWidget):
 
         self._cur = _checkbox(self.tr("Connect under reset"), self._settings.connect_under_reset)
 
-        form = QFormLayout()
+        # Wrapped rows whose visibility depends on the selected backend (see _on_probe_changed).
+        self._gdb_wrap = _wrap(gdb_row)
+        self._tpwr_wrap = _wrap(tpwr_row)
+
+        # pyOCD target picker row (shown only for pyOCD probes, which can't auto-detect the target).
+        self._target_field = QLineEdit(self)
+        self._target_field.setReadOnly(True)
+        self._target_field.setPlaceholderText(self.tr("No target selected"))
+        self._choose_target_btn = QPushButton(self.tr("Choose Target…"), self)
+        self._choose_target_btn.clicked.connect(self._on_choose_target)
+        target_row = QHBoxLayout()
+        target_row.addWidget(self._target_field, 1)
+        target_row.addWidget(self._choose_target_btn)
+        self._target_wrap = _wrap(target_row)
+
+        self._form = QFormLayout()
+        form = self._form
         form.addRow(self.tr("Probe:"), _wrap(probe_row))
+        form.addRow(self.tr("Target:"), self._target_wrap)
         form.addRow(self.tr("Port override:"), self._port_override)
-        form.addRow(self.tr("GDB:"), _wrap(gdb_row))
+        form.addRow(self.tr("GDB:"), self._gdb_wrap)
         form.addRow(self.tr("Transport:"), _wrap(transport_row))
         form.addRow(self.tr("Interface speed:"), _wrap(speed_row))
-        form.addRow("", _wrap(tpwr_row))
+        form.addRow("", self._tpwr_wrap)
         form.addRow("", self._cur)
         self._on_tpwr_toggled(self._tpwr.isChecked())
+        self._probe_box.currentIndexChanged.connect(self._on_probe_changed)
 
         self._connect_btn = QPushButton(self.tr("Connect"), self)
         self._connect_btn.clicked.connect(self._on_connect)
@@ -147,8 +173,8 @@ class ConnectPanel(QWidget):
 
         self._targets = QListWidget(self)
         self._targets.itemDoubleClicked.connect(self._on_target_double_clicked)
-        targets_box = QGroupBox(self.tr("Targets"), self)
-        targets_layout = QVBoxLayout(targets_box)
+        self._targets_box = QGroupBox(self.tr("Targets"), self)
+        targets_layout = QVBoxLayout(self._targets_box)
         targets_layout.addLayout(scan_row)
         targets_layout.addWidget(self._targets)
 
@@ -158,7 +184,7 @@ class ConnectPanel(QWidget):
         layout = QVBoxLayout(self)
         layout.addLayout(form)
         layout.addLayout(conn_row)
-        layout.addWidget(targets_box)
+        layout.addWidget(self._targets_box)
         layout.addWidget(self._status)
         layout.addStretch(1)
 
@@ -166,10 +192,13 @@ class ConnectPanel(QWidget):
         self._session.state_changed.connect(self._update_for_state)
         self._session.targets_found.connect(self._populate_targets)
         self._session.capabilities_changed.connect(self._apply_capabilities)
+        self._session.operation_failed.connect(self._on_operation_failed)
 
     # --- actions ---------------------------------------------------------------
 
     def refresh_probes(self) -> None:
+        # Repopulate without firing currentIndexChanged per item; settle once at the end.
+        self._probe_box.blockSignals(True)
         self._probe_box.clear()
         probes = discover_all(include_fake=self._use_fake)
         for probe in probes:
@@ -179,13 +208,17 @@ class ConnectPanel(QWidget):
             self._probe_box.addItem(label, probe)
         if not probes:
             self._probe_box.addItem(self.tr("No probes found"), None)
+        self._probe_box.blockSignals(False)
+        self._on_probe_changed()
 
     def _selected_probe(self) -> ProbeInfo | None:
         probe = self._probe_box.currentData()
         if probe is None:
             return None
         override = self._port_override.text().strip()
-        if override:
+        # The port override is a BMP-style device-path tweak; it is meaningless (and harmful) for a
+        # pyOCD probe whose identifier is a USB unique id.
+        if override and probe.backend != "pyocd":
             probe = ProbeInfo(
                 backend=probe.backend,
                 identifier=override,
@@ -199,12 +232,16 @@ class ConnectPanel(QWidget):
         if probe is None:
             self._status.setText(self.tr("Select a probe first"))
             return
+        # pyOCD's chosen target is unique, so attach to it automatically once the post-connect
+        # scan reports it (see _populate_targets).
+        self._pending_autoattach = probe.backend == "pyocd"
         options = ConnectOptions(
             transport=self._transport.currentText(),
             target_power=self._tpwr.isChecked(),
             tpwr_delay_ms=self._tpwr_delay.value(),
             connect_under_reset=self._cur.isChecked(),
             interface_speed_hz=self._speed_hz(),
+            target_name=self._chosen_target,
         )
         self._persist()
         self._session.connect_probe(probe.backend, probe, options, self._gdb_path.text().strip())
@@ -215,6 +252,59 @@ class ConnectPanel(QWidget):
     def _on_tpwr_toggled(self, checked: bool) -> None:
         self._tpwr_delay_label.setVisible(checked)
         self._tpwr_delay.setVisible(checked)
+
+    # --- pyOCD target selection ------------------------------------------------
+
+    def _on_probe_changed(self, *_args) -> None:
+        probe = self._probe_box.currentData()
+        is_pyocd = probe is not None and probe.backend == "pyocd"
+        # pyOCD has no GDB/port/tpwr; it does need a manually chosen target instead.
+        self._form.setRowVisible(self._target_wrap, is_pyocd)
+        self._form.setRowVisible(self._port_override, not is_pyocd)
+        self._form.setRowVisible(self._gdb_wrap, not is_pyocd)
+        self._form.setRowVisible(self._tpwr_wrap, not is_pyocd)
+        # pyOCD has a single, manually chosen target attached automatically on connect, so the
+        # scan/attach target list is pointless for it.
+        self._targets_box.setVisible(not is_pyocd)
+        # The panel's status line only echoes session state (already in the window's status bar) and
+        # GDB-path feedback (N/A to pyOCD), so it is just clutter for pyOCD probes.
+        self._status.setVisible(not is_pyocd)
+        self._chosen_target = self._settings.pyocd_last_target(probe.serial) if is_pyocd else ""
+        self._target_field.setText(self._chosen_target)
+        self._update_connect_enabled()
+
+    def _on_choose_target(self) -> None:
+        probe = self._probe_box.currentData()
+        if probe is None or probe.backend != "pyocd":
+            return
+        from alynprog.backends.pyocd.targets import TargetCatalog, default_cache_path
+        from alynprog.ui.panels.target_dialog import TargetSelectDialog
+
+        dialog = TargetSelectDialog(
+            self,
+            settings=self._settings,
+            probe_serial=probe.serial,
+            catalog=TargetCatalog(default_cache_path()),
+        )
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            record = dialog.selected_target()
+            if record is not None:
+                self._chosen_target = record.name
+                self._target_field.setText(record.name)
+                self._update_connect_enabled()
+
+    def _update_connect_enabled(self) -> None:
+        self._connect_btn.setEnabled(self._connect_allowed(self._session.state))
+
+    def _connect_allowed(self, state: SessionState) -> bool:
+        if state != SessionState.DISCONNECTED:
+            return False
+        probe = self._probe_box.currentData()
+        if probe is None:
+            return False  # the "No probes found" sentinel has no probe to connect to
+        if probe.backend == "pyocd":
+            return bool(self._chosen_target)  # a pyOCD target must be chosen first
+        return True
 
     def _on_attach(self) -> None:
         item = self._targets.currentItem()
@@ -251,6 +341,19 @@ class ConnectPanel(QWidget):
             self._targets.addItem(item)
         if self._targets.count():
             self._targets.setCurrentRow(0)
+        if self._pending_autoattach and targets:
+            # pyOCD connect: attach to its single target without a manual step.
+            self._pending_autoattach = False
+            self._session.attach(targets[0].index)
+
+    def _on_operation_failed(self, op: str, _message: str) -> None:
+        # pyOCD connects+attaches in one Connect click and has no manual Attach control. If the
+        # attach fails (e.g. the target was unplugged from the probe), the session is left
+        # "connected, no target" with Connect disabled. Roll back to DISCONNECTED so the user can
+        # just click Connect again to retry, instead of having to press Disconnect first.
+        probe = self._probe_box.currentData()
+        if op == "attach" and probe is not None and probe.backend == "pyocd":
+            self._session.disconnect_probe()
 
     def _apply_capabilities(self, caps) -> None:
         self._tpwr.setEnabled(caps.supports_target_power)
@@ -259,11 +362,14 @@ class ConnectPanel(QWidget):
     def _update_for_state(self, state: SessionState) -> None:
         connected = state in (SessionState.CONNECTED, SessionState.ATTACHED)
         idle = state != SessionState.BUSY and state != SessionState.CONNECTING
-        self._connect_btn.setEnabled(state == SessionState.DISCONNECTED)
+        self._connect_btn.setEnabled(self._connect_allowed(state))
         self._disconnect_btn.setEnabled(connected and idle)
         self._scan_btn.setEnabled(connected and idle)
         self._attach_btn.setEnabled(connected and idle)
         self._probe_box.setEnabled(state == SessionState.DISCONNECTED)
+        # Picking a target fetches pyOCD's catalog, which clobbers the global current-session; only
+        # allow it while DISCONNECTED so it can't disturb a live session.
+        self._choose_target_btn.setEnabled(state == SessionState.DISCONNECTED)
         self._status.setText(self.tr("State: %s") % state.value)
 
         # Scan targets automatically right after a successful connect.

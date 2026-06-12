@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from alynprog.core.backend import EraseKind, EraseSpec
+from alynprog.core.backend import EraseKind, EraseSpec, VerifyMethod
 from alynprog.core.sectors import Sector, coalesce_ranges, enumerate_sectors
 from alynprog.core.session import SessionController, SessionState
 from alynprog.core.settings import Settings
@@ -64,6 +64,8 @@ class ProgramPanel(QWidget):
 
         self._verify = QCheckBox(self.tr("Verify after programming"), self)
         self._verify.setChecked(True)
+        self._verify_pref = True  # user's intended verify setting, preserved across backends
+        self._verify.toggled.connect(self._on_verify_toggled)
         self._run_after = QCheckBox(self.tr("Run after programming"), self)
 
         self._program_btn = QPushButton(self.tr("Start programming"), self)
@@ -236,6 +238,17 @@ class ProgramPanel(QWidget):
 
     def _apply_capabilities(self, caps) -> None:
         attached = self._session.state == SessionState.ATTACHED
+        # Some backends (pyOCD) do not verify after programming; don't offer a checkbox that lies.
+        # Restore the user's preference when verify is available again (blockSignals so the
+        # programmatic setChecked doesn't overwrite that preference).
+        verifies = caps.verify_method is not VerifyMethod.NONE
+        self._verify.blockSignals(True)
+        self._verify.setEnabled(verifies)
+        self._verify.setChecked(verifies and self._verify_pref)
+        self._verify.blockSignals(False)
+        self._verify.setToolTip(
+            "" if verifies else self.tr("This backend does not verify after programming")
+        )
         self._mass_erase_btn.setEnabled(attached and caps.supports_mass_erase)
         self._mass_erase_btn.setToolTip(
             "" if caps.supports_mass_erase else self.tr("Not supported by this probe/target")
@@ -247,7 +260,18 @@ class ProgramPanel(QWidget):
             "" if sector else self.tr("Sector erase not supported here")
         )
 
+    def _on_verify_toggled(self, checked: bool) -> None:
+        # Only user toggles reach here (programmatic changes block signals), so this tracks intent.
+        self._verify_pref = checked
+
     def _update_for_state(self, state: SessionState) -> None:
+        if state == SessionState.DISCONNECTED:
+            # No capabilities while disconnected: restore the verify checkbox to the user's choice.
+            self._verify.blockSignals(True)
+            self._verify.setEnabled(True)
+            self._verify.setChecked(self._verify_pref)
+            self._verify.blockSignals(False)
+            self._verify.setToolTip("")
         attached = state == SessionState.ATTACHED
         self._program_btn.setEnabled(attached)
         self._reset_btn.setEnabled(state in (SessionState.CONNECTED, SessionState.ATTACHED))

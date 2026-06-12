@@ -3,9 +3,9 @@
 The model has a *fixed* row count derived from the region size (no ``canFetchMore`` — that is for
 sequential growth, not random access over a known-size region). On a cell miss it asks the cache
 for the page base to fetch and invokes a request callback; the worker later delivers the page via
-:meth:`fill_page`, which fills the cache and emits ``dataChanged`` for the affected rows. Cells in
-flash regions are non-editable; RAM is editable; unknown regions are editable only after the panel
-opts in (a one-time warning).
+:meth:`fill_page`, which fills the cache and emits ``dataChanged`` for the affected rows. Only RAM
+and flash cells are editable (flash via a backend read-modify-write); every other region (ROM,
+device/peripheral, unclassified) is read-only.
 """
 
 from __future__ import annotations
@@ -32,7 +32,6 @@ class HexTableModel(QAbstractTableModel):
         self._memory_map: list[MemoryRegion] = []
         self._request: RequestCallback | None = None
         self._write: WriteCallback | None = None
-        self._allow_unknown_edit = False
         # ASCII highlight: which row and byte-offset range mirrors the selected hex cell.
         self._hl_row = -1
         self._hl_lo = 0
@@ -48,12 +47,6 @@ class HexTableModel(QAbstractTableModel):
 
     def set_memory_map(self, regions: list[MemoryRegion]) -> None:
         self._memory_map = list(regions)
-
-    def set_allow_unknown_edit(self, allow: bool) -> None:
-        self._allow_unknown_edit = allow
-
-    def allow_unknown_edit(self) -> bool:
-        return self._allow_unknown_edit
 
     # --- ASCII highlight (mirrors the selected hex cell) -----------------------
 
@@ -213,9 +206,9 @@ class HexTableModel(QAbstractTableModel):
         addr = self._cell_addr(index.row(), index.column())
         if addr >= self._region.end:
             return base
-        kind = self.region_kind(addr)
-        # Flash is editable: writes are performed as a sector read-modify-write by the backend.
-        if kind is RegionKind.UNKNOWN and not self._allow_unknown_edit:
+        # Only RAM and flash are editable (flash via a backend read-modify-write). ROM, device and
+        # unclassified regions are read-only.
+        if self.region_kind(addr) not in (RegionKind.RAM, RegionKind.FLASH):
             return base
         return base | Qt.ItemFlag.ItemIsEditable
 

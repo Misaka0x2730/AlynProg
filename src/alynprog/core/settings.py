@@ -7,11 +7,21 @@ Storage uses the platform-native backend (registry on Windows, plist on macOS, i
 
 from __future__ import annotations
 
+import re
+
 from PySide6.QtCore import QByteArray, QSettings
 
 from alynprog import APP_NAME, APP_ORG
 
 _MAX_RECENT = 10
+_MAX_RECENT_GOTO = 5
+
+# QSettings keys are path-like; keep a probe serial safe to embed as one path segment.
+_SERIAL_UNSAFE = re.compile(r"[^A-Za-z0-9_-]")
+
+
+def _sanitize_serial(serial: str) -> str:
+    return _SERIAL_UNSAFE.sub("_", serial) or "_"
 
 
 def _to_int(value: object, default: int) -> int:
@@ -113,6 +123,21 @@ class Settings:
     def interface_speed_hz(self, value: int) -> None:
         self._s.setValue("connect/interface_speed_hz", int(value))
 
+    # --- pyOCD target selection (per probe, with a global fallback) -------------
+
+    def pyocd_last_target(self, serial: str) -> str:
+        """The last target chosen for this probe, falling back to the most recent global one."""
+        if serial:
+            value = self._s.value(f"pyocd/last_target/{_sanitize_serial(serial)}")
+            if value:
+                return str(value)
+        return str(self._s.value("pyocd/last_target", "") or "")
+
+    def set_pyocd_last_target(self, serial: str, name: str) -> None:
+        if serial:
+            self._s.setValue(f"pyocd/last_target/{_sanitize_serial(serial)}", name)
+        self._s.setValue("pyocd/last_target", name)
+
     # --- Memory / hex view -----------------------------------------------------
 
     @property
@@ -122,6 +147,21 @@ class Settings:
     @hex_width.setter
     def hex_width(self, value: int) -> None:
         self._s.setValue("memory/hex_width", int(value))
+
+    @property
+    def recent_goto_addresses(self) -> list[str]:
+        value = self._s.value("memory/recent_goto", [])
+        if isinstance(value, str):
+            return [value] if value else []
+        if value is None:
+            return []
+        return [str(v) for v in value]
+
+    def push_recent_goto(self, address: str) -> None:
+        items = [a for a in self.recent_goto_addresses if a != address]
+        items.insert(0, address)
+        del items[_MAX_RECENT_GOTO:]
+        self._s.setValue("memory/recent_goto", items)
 
     # --- Programming -----------------------------------------------------------
 

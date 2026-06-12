@@ -39,13 +39,14 @@ class MainWindow(QMainWindow):
         super().__init__()
         self._theme = theme
         self._settings = settings
-        self.setWindowTitle(APP_NAME)
+        tagline = self.tr("Simple Microcontroller Flash Tool")
+        self.setWindowTitle(f"{APP_NAME} — {tagline}")
         self.resize(1100, 720)
 
         self._session = SessionController(self)
 
         self._log = LogPanel(self)
-        self._hexview = HexView(self._session, self)
+        self._hexview = HexView(self._session, self._settings, self)
         self._program = ProgramPanel(self._session, self._settings, self)
         self._connect = ConnectPanel(self._session, self._settings, use_fake=use_fake, parent=self)
 

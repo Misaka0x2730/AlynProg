@@ -23,6 +23,12 @@ dependencies = [
     "intelhex>=2.3.0",
 ]
 
+[project.optional-dependencies]
+# pyOCD backend for CMSIS-DAP / ST-Link / J-Link probes. Heavy: pulls libusb, capstone and
+# cmsis-pack-manager. Recommend Python 3.11-3.13 to install — libusb-package ships no cp314 wheel
+# yet, so 3.14 falls back to building it from source (needs a C toolchain).
+pyocd = ["pyocd>=0.44,<0.45"]
+
 [project.urls]
 Homepage = "https://github.com/alynprog/alynprog"
 Repository = "https://github.com/alynprog/alynprog"
@@ -36,6 +42,9 @@ dev = [
     "pytest>=8",
     "pytest-qt>=4.4",
     "pytest-timeout>=2.3",
+    # Installed in dev so the suite exercises the real library; pyocd-specific tests skip when it
+    # is absent, so a pyocd-less checkout still passes.
+    "pyocd>=0.44,<0.45",
 ]
 
 [build-system]
@@ -77,7 +86,7 @@ pythonpath = ["."]
 # Hardware tests are deselected by default; run them with `pytest -m hardware` (the CLI -m wins).
 addopts = "-ra --strict-markers -m 'not hardware'"
 markers = [
-    "hardware: test requires a real Black Magic Probe attached (deselect with '-m \"not hardware\"')",
+    "hardware: test requires a real debug probe attached — a Black Magic Probe for the bmp backend, or a CMSIS-DAP/ST-Link/J-Link for pyocd (deselect with '-m \"not hardware\"')",
     "slow: test is slow",
 ]
 qt_api = "pyside6"

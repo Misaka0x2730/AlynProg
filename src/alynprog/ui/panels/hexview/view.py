@@ -11,7 +11,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QHeaderView,
     QLabel,
-    QLineEdit,
     QPushButton,
     QTableView,
     QVBoxLayout,
@@ -20,6 +19,7 @@ from PySide6.QtWidgets import (
 
 from alynprog.core.backend import MemoryRegion, RegionKind
 from alynprog.core.session import SessionController
+from alynprog.core.settings import Settings
 from alynprog.ui.panels.hexview.ascii_delegate import AsciiHighlightDelegate
 from alynprog.ui.panels.hexview.model import BYTES_PER_ROW, HexTableModel
 
@@ -29,9 +29,16 @@ _WIDTHS = [("8-bit", 1), ("16-bit", 2), ("32-bit", 4)]
 class HexView(QWidget):
     logMessage = Signal(str, str)  # (level, text)
 
-    def __init__(self, session: SessionController, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        session: SessionController,
+        settings: Settings | None = None,
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self._session = session
+        self._settings = settings
+        self._recent_goto_mem: list[str] = []  # fallback recents when no Settings is provided
         self._model = HexTableModel(self)
         self._model.set_request_callback(self._session.read_page)
         self._model.set_write_callback(self._on_edit_write)
@@ -43,20 +50,21 @@ class HexView(QWidget):
         self._region_box = QComboBox(self)
         self._region_box.currentIndexChanged.connect(self._on_region_changed)
 
-        self._goto = QLineEdit(self)
-        self._goto.setPlaceholderText(self.tr("address (0x…)"))
-        self._goto.setMaximumWidth(140)
-        self._goto.returnPressed.connect(self._on_goto)
+        # Editable combo: type an address, or pick a recently-visited one from the dropdown.
+        self._goto = QComboBox(self)
+        self._goto.setEditable(True)
+        self._goto.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
+        # Give "Go to" a roomier field; the stretched Region combo gives up the width.
+        self._goto.setMinimumWidth(220)
+        self._goto.lineEdit().setPlaceholderText(self.tr("address (0x…)"))
+        self._goto.lineEdit().returnPressed.connect(self._on_goto)
+        self._goto.activated.connect(lambda _index: self._on_goto())
+        self._reload_goto_items()
 
         self._width_box = QComboBox(self)
         for label, width in _WIDTHS:
             self._width_box.addItem(label, width)
         self._width_box.currentIndexChanged.connect(self._on_width_changed)
-
-        from PySide6.QtWidgets import QCheckBox
-
-        self._edit_unknown = QCheckBox(self.tr("Edit unknown regions"), self)
-        self._edit_unknown.toggled.connect(self._on_edit_unknown)
 
         refresh = QPushButton(self.tr("Refresh"), self)
         refresh.clicked.connect(lambda: self._model.invalidate())
@@ -69,7 +77,6 @@ class HexView(QWidget):
         toolbar.addWidget(QLabel(self.tr("Go to:")))
         toolbar.addWidget(self._goto)
         toolbar.addWidget(self._width_box)
-        toolbar.addWidget(self._edit_unknown)
         toolbar.addWidget(refresh)
         toolbar.addWidget(save)
 
@@ -133,7 +140,7 @@ class HexView(QWidget):
         self._model.set_ascii_highlight(current.row(), lo, hi)
 
     def _on_goto(self) -> None:
-        text = self._goto.text().strip()
+        text = self._goto.currentText().strip()
         region = self._model.region
         if not text or region is None:
             return
@@ -150,12 +157,31 @@ class HexView(QWidget):
         row = (addr - region.start) // BYTES_PER_ROW
         self._table.scrollTo(self._model.index(row, 0), QAbstractItemView.ScrollHint.PositionAtTop)
         self._table.selectRow(row)
+        self._push_recent_goto(f"0x{addr:08X}")
 
-    def _on_edit_unknown(self, checked: bool) -> None:
-        if checked and not self._confirm_unknown_edit():
-            self._edit_unknown.setChecked(False)
-            return
-        self._model.set_allow_unknown_edit(checked)
+    def _recent_goto(self) -> list[str]:
+        if self._settings is not None:
+            return self._settings.recent_goto_addresses
+        return self._recent_goto_mem
+
+    def _push_recent_goto(self, address: str) -> None:
+        if self._settings is not None:
+            self._settings.push_recent_goto(address)
+        else:
+            items = [a for a in self._recent_goto_mem if a != address]
+            items.insert(0, address)
+            del items[5:]
+            self._recent_goto_mem = items
+        self._reload_goto_items()
+
+    def _reload_goto_items(self) -> None:
+        # Repopulate the recents dropdown without disturbing the user's current edit text.
+        current = self._goto.currentText()
+        self._goto.blockSignals(True)
+        self._goto.clear()
+        self._goto.addItems(self._recent_goto())
+        self._goto.setEditText(current)
+        self._goto.blockSignals(False)
 
     def _on_save(self) -> None:
         region = self._model.region
@@ -182,21 +208,6 @@ class HexView(QWidget):
             )
 
     # --- helpers ---------------------------------------------------------------
-
-    def _confirm_unknown_edit(self) -> bool:
-        from PySide6.QtWidgets import QMessageBox
-
-        answer = QMessageBox.warning(
-            self,
-            self.tr("Edit unknown regions"),
-            self.tr(
-                "Unknown regions are not classified as RAM or flash. Writing to them may fail or "
-                "have unexpected effects. Enable editing anyway?"
-            ),
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No,
-        )
-        return answer == QMessageBox.StandardButton.Yes
 
     def _resize_columns(self) -> None:
         # Size from the actual font so every hex/ASCII glyph fits (no elision that would shift the

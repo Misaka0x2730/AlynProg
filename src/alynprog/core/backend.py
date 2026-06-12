@@ -97,6 +97,9 @@ class ConnectOptions:
     connect_under_reset: bool = False
     # SWD/JTAG interface clock in Hz (default 1 MHz).
     interface_speed_hz: int = 1_000_000
+    # Manually chosen target name for backends that cannot auto-detect (e.g. pyOCD's
+    # "stm32f103rc"). Empty for auto-detecting backends (BMP scans the bus itself).
+    target_name: str = ""
 
 
 class EraseKind(StrEnum):

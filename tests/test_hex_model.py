@@ -12,6 +12,10 @@ def _ram(start=0x2000_0000, size=0x1000):
     return MemoryRegion(start, size, RegionKind.RAM, name="SRAM")
 
 
+def _flash(start=0x0800_0000, size=0x1000):
+    return MemoryRegion(start, size, RegionKind.FLASH, name="Flash", blocksize=0x400)
+
+
 def test_row_and_column_count(qapp):
     model = HexTableModel()
     model.set_region(MemoryRegion(0x2000_0000, 256, RegionKind.RAM))
@@ -84,14 +88,21 @@ def test_ascii_highlight_maps_to_selected_cell(qapp):
     assert model.ascii_column() == 4
 
 
-def test_unknown_region_editable_only_after_optin(qapp):
+def test_only_ram_and_flash_are_editable(qapp):
     model = HexTableModel()
-    model.set_memory_map([])  # nothing classified -> unknown
-    model.set_region(MemoryRegion(0x3000_0000, 0x100, RegionKind.UNKNOWN))
-    assert not bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)
+    ram, flash = _ram(), _flash()
+    rom = MemoryRegion(0x0000_0000, 0x100, RegionKind.UNKNOWN, name="ROM")
+    model.set_memory_map([ram, flash, rom])
 
-    model.set_allow_unknown_edit(True)
-    assert bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)
+    model.set_region(ram)
+    assert bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)  # RAM editable
+
+    model.set_region(flash)
+    assert bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)  # flash editable (RMW)
+
+    # ROM / device / unclassified is read-only now — no opt-in checkbox.
+    model.set_region(rom)
+    assert not bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)
 
 
 def test_setdata_calls_write_callback(qapp):

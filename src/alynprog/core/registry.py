@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from alynprog.backends.bmp.backend import BmpBackend
 from alynprog.backends.fake.backend import FakeBackend
+from alynprog.backends.pyocd.backend import PyocdBackend
 from alynprog.core.backend import ProbeBackend, ProbeInfo
 
 _REGISTRY: dict[str, type[ProbeBackend]] = {}
@@ -47,3 +48,4 @@ def discover_all(*, include_fake: bool = False) -> list[ProbeInfo]:
 
 register(BmpBackend)
 register(FakeBackend)
+register(PyocdBackend)
