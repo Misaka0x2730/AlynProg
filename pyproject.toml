@@ -1,0 +1,84 @@
+[project]
+name = "alynprog"
+version = "0.1.0"
+description = "Cross-platform GUI utility for flashing and inspecting microcontrollers (Black Magic Probe first, more backends later)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "AlynProg contributors" }]
+keywords = ["microcontroller", "flashing", "gdb", "black-magic-probe", "swd", "embedded"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Embedded Systems",
+]
+dependencies = [
+    "PySide6>=6.9,<6.12",
+    "pygdbmi==0.11.0.0",
+    "pyserial==3.5",
+    "intelhex>=2.3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/alynprog/alynprog"
+Repository = "https://github.com/alynprog/alynprog"
+
+[project.scripts]
+alynprog = "alynprog.app:main"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.10",
+    "pytest>=8",
+    "pytest-qt>=4.4",
+    "pytest-timeout>=2.3",
+]
+
+[build-system]
+requires = ["uv_build>=0.11,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "alynprog"
+module-root = "src"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific
+]
+ignore = [
+    "B008",  # function call in default arg (Qt signals/defaults are fine)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+# Hardware tests are deselected by default; run them with `pytest -m hardware` (the CLI -m wins).
+addopts = "-ra --strict-markers -m 'not hardware'"
+markers = [
+    "hardware: test requires a real Black Magic Probe attached (deselect with '-m \"not hardware\"')",
+    "slow: test is slow",
+]
+qt_api = "pyside6"
+timeout = 60

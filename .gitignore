@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.so
+
+# Virtual env / uv
+.venv/
+uv.lock
+
+# Test / tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Compiled Qt translations (generated from .ts)
+*.qm
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# AlynProg runtime/local
+*.log
+/scratch/

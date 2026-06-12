@@ -1,0 +1,10 @@
+# udev rules for Black Magic Probe (and BMP-DFU bootloader) USB access on Linux.
+# Install: sudo cp 99-blackmagic.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules && sudo udevadm trigger
+#
+# Grants the logged-in user access to the probe's GDB/UART CDC-ACM ports without root.
+
+# Black Magic Probe (GDB server + UART)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="6018", MODE="0660", TAG+="uaccess"
+# Black Magic Probe DFU bootloader
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="6017", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="6018", MODE="0660", TAG+="uaccess"
