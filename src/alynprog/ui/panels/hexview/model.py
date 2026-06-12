@@ -10,17 +10,35 @@ device/peripheral, unclassified) is read-only.
 
 from __future__ import annotations
 
+import bisect
 from collections.abc import Callable
 
 from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
+from PySide6.QtGui import QColor
 
 from alynprog.core.backend import MemoryRegion, RegionKind
 from alynprog.core.memory import PagedMemoryCache
 
 BYTES_PER_ROW = 16
 
+# Tint painted behind bytes that differ in a comparison (low alpha so the glyph stays readable).
+DIFF_BACKGROUND = QColor(229, 57, 53, 80)
+
 RequestCallback = Callable[[int, int], None]  # (page_base, size)
 WriteCallback = Callable[[int, bytes], None]  # (addr, data)
+
+
+def _merge_ranges(ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Sort and merge ``[start, end)`` ranges into a minimal, non-overlapping ascending list."""
+    ordered = sorted(ranges)
+    merged: list[tuple[int, int]] = []
+    for start, end in ordered:
+        if merged and start <= merged[-1][1]:
+            prev_start, prev_end = merged[-1]
+            merged[-1] = (prev_start, max(prev_end, end))
+        else:
+            merged.append((start, end))
+    return merged
 
 
 class HexTableModel(QAbstractTableModel):
@@ -32,6 +50,13 @@ class HexTableModel(QAbstractTableModel):
         self._memory_map: list[MemoryRegion] = []
         self._request: RequestCallback | None = None
         self._write: WriteCallback | None = None
+        # When set, every in-region byte is editable, bypassing the device memory-map gating (used
+        # by file-document panes, where the whole buffer is freely editable).
+        self._editable_override = False
+        # Byte ranges [start, end) painted as differing after a comparison: kept sorted and merged
+        # so lookups can binary-search (a whole-region diff can hold many thousands of ranges).
+        self._highlight: list[tuple[int, int]] = []
+        self._highlight_starts: list[int] = []
         # ASCII highlight: which row and byte-offset range mirrors the selected hex cell.
         self._hl_row = -1
         self._hl_lo = 0
@@ -47,6 +72,53 @@ class HexTableModel(QAbstractTableModel):
 
     def set_memory_map(self, regions: list[MemoryRegion]) -> None:
         self._memory_map = list(regions)
+
+    def set_editable_override(self, editable: bool) -> None:
+        self._editable_override = editable
+
+    # --- diff highlight (set after a comparison) -------------------------------
+
+    def set_highlight_ranges(self, ranges: list[tuple[int, int]]) -> None:
+        """Mark byte ranges ``[start, end)`` as differing; repaints the whole table."""
+        self._highlight = _merge_ranges(ranges)
+        self._highlight_starts = [start for start, _end in self._highlight]
+        if self._region is not None:
+            top = self.index(0, 0)
+            bottom = self.index(self.rowCount() - 1, self.columnCount() - 1)
+            self.dataChanged.emit(top, bottom, [Qt.ItemDataRole.BackgroundRole])
+
+    def _is_highlighted(self, lo: int, hi: int) -> bool:
+        # Ranges are sorted and non-overlapping, so the only candidate is the last one starting
+        # before *hi*; if it reaches past *lo* the cell overlaps a difference.
+        starts = self._highlight_starts
+        if not starts:
+            return False
+        i = bisect.bisect_right(starts, hi - 1) - 1
+        return i >= 0 and self._highlight[i][1] > lo
+
+    def diff_char_ranges(self, row: int) -> list[tuple[int, int]]:
+        """ASCII char-offset ranges ``[lo, hi)`` within *row* that are highlighted as differing.
+
+        Used by the delegate to tint individual ASCII glyphs (the hex cells tint via
+        ``BackgroundRole``; the ASCII column is custom-painted and asks for the offsets directly).
+        """
+        if not self._highlight or self._region is None:
+            return []
+        row_start = self._region.start + row * BYTES_PER_ROW
+        row_end = min(row_start + BYTES_PER_ROW, self._region.end)
+        i = bisect.bisect_left(self._highlight_starts, row_start)
+        if i > 0 and self._highlight[i - 1][1] > row_start:
+            i -= 1  # a range starting earlier may still reach into this row
+        ranges: list[tuple[int, int]] = []
+        count = len(self._highlight)
+        while i < count and self._highlight[i][0] < row_end:
+            start, end = self._highlight[i]
+            lo = max(start, row_start)
+            hi = min(end, row_end)
+            if lo < hi:
+                ranges.append((lo - row_start, hi - row_start))
+            i += 1
+        return ranges
 
     # --- ASCII highlight (mirrors the selected hex cell) -----------------------
 
@@ -69,6 +141,8 @@ class HexTableModel(QAbstractTableModel):
                 self.dataChanged.emit(index, index, [Qt.ItemDataRole.DisplayRole])
 
     def set_region(self, region: MemoryRegion | None) -> None:
+        # Diff highlights are kept in absolute addresses so they survive region/width changes (the
+        # caller clears them explicitly); only bytes inside the current region are ever tinted.
         self.beginResetModel()
         self._region = region
         self._cache.invalidate()
@@ -143,12 +217,25 @@ class HexTableModel(QAbstractTableModel):
     def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole):
         if not index.isValid() or self._region is None:
             return None
+        row, col = index.row(), index.column()
+        if role == Qt.ItemDataRole.BackgroundRole:
+            return self._background_for(row, col)
         if role not in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             return None
-        row, col = index.row(), index.column()
         if col == self._hex_columns():
             return self._ascii_for_row(row)
         return self._hex_cell(row, col)
+
+    def _background_for(self, row: int, col: int):
+        # The ASCII column is custom-painted and tints individual glyphs via diff_char_ranges();
+        # only the hex cells use BackgroundRole here.
+        if not self._highlight or col == self._hex_columns():
+            return None
+        lo = self._cell_addr(row, col)
+        hi = min(lo + self._width, self._region.end)
+        if lo < hi and self._is_highlighted(lo, hi):
+            return DIFF_BACKGROUND
+        return None
 
     def _hex_cell(self, row: int, col: int) -> str:
         addr = self._cell_addr(row, col)
@@ -206,6 +293,8 @@ class HexTableModel(QAbstractTableModel):
         addr = self._cell_addr(index.row(), index.column())
         if addr >= self._region.end:
             return base
+        if self._editable_override:
+            return base | Qt.ItemFlag.ItemIsEditable
         # Only RAM and flash are editable (flash via a backend read-modify-write). ROM, device and
         # unclassified regions are read-only.
         if self.region_kind(addr) not in (RegionKind.RAM, RegionKind.FLASH):

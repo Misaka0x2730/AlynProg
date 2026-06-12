@@ -5,7 +5,7 @@ from __future__ import annotations
 from PySide6.QtCore import Qt
 
 from alynprog.core.backend import MemoryRegion, RegionKind
-from alynprog.ui.panels.hexview.model import HexTableModel
+from alynprog.ui.panels.hexview.model import DIFF_BACKGROUND, HexTableModel
 
 
 def _ram(start=0x2000_0000, size=0x1000):
@@ -103,6 +103,76 @@ def test_only_ram_and_flash_are_editable(qapp):
     # ROM / device / unclassified is read-only now — no opt-in checkbox.
     model.set_region(rom)
     assert not bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)
+
+
+def test_editable_override_makes_unknown_region_editable(qapp):
+    model = HexTableModel()
+    rom = MemoryRegion(0x0000_0000, 0x100, RegionKind.UNKNOWN, name="ROM")
+    model.set_memory_map([rom])
+    model.set_region(rom)
+    # Without an override an UNKNOWN region is read-only...
+    assert not bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)
+    # ...but a file document overrides the device gating so every byte is editable.
+    model.set_editable_override(True)
+    assert bool(model.flags(model.index(0, 0)) & Qt.ItemFlag.ItemIsEditable)
+
+
+def test_highlight_ranges_paint_background(qapp):
+    model = HexTableModel()
+    model.set_request_callback(lambda base, size: None)
+    region = _ram(size=0x100)
+    model.set_region(region)
+
+    assert model.data(model.index(0, 0), Qt.ItemDataRole.BackgroundRole) is None
+    # Highlight the single byte at region start; its hex cell tints via BackgroundRole.
+    model.set_highlight_ranges([(region.start, region.start + 1)])
+    assert model.data(model.index(0, 0), Qt.ItemDataRole.BackgroundRole) == DIFF_BACKGROUND
+    assert model.data(model.index(0, 1), Qt.ItemDataRole.BackgroundRole) is None
+    # The ASCII column is glyph-tinted by the delegate, so it reports the char offsets instead.
+    ascii_col = model.ascii_column()
+    assert model.data(model.index(0, ascii_col), Qt.ItemDataRole.BackgroundRole) is None
+    assert model.diff_char_ranges(0) == [(0, 1)]
+    assert model.diff_char_ranges(1) == []
+
+
+def test_highlight_multiple_ranges_via_bisect(qapp):
+    model = HexTableModel()
+    model.set_request_callback(lambda base, size: None)
+    region = _ram(size=0x100)
+    model.set_region(region)
+    # Several disjoint ranges in row 0: bytes 1, 4-5, and 8.
+    base = region.start
+    model.set_highlight_ranges([(base + 1, base + 2), (base + 4, base + 6), (base + 8, base + 9)])
+    bg = Qt.ItemDataRole.BackgroundRole
+    tinted = [c for c in range(16) if model.data(model.index(0, c), bg) == DIFF_BACKGROUND]
+    assert tinted == [1, 4, 5, 8]
+    # The ASCII column reports the same offsets for per-glyph tinting.
+    assert model.diff_char_ranges(0) == [(1, 2), (4, 6), (8, 9)]
+
+
+def test_highlight_ranges_are_merged(qapp):
+    model = HexTableModel()
+    model.set_request_callback(lambda base, size: None)
+    region = _ram(size=0x100)
+    model.set_region(region)
+    base = region.start
+    # Overlapping/adjacent ranges collapse into one contiguous highlight.
+    model.set_highlight_ranges([(base + 2, base + 4), (base + 3, base + 6), (base + 6, base + 7)])
+    assert model.diff_char_ranges(0) == [(2, 7)]
+
+
+def test_highlight_persists_across_region_change(qapp):
+    model = HexTableModel()
+    model.set_request_callback(lambda base, size: None)
+    region = _ram(size=0x100)
+    model.set_region(region)
+    model.set_highlight_ranges([(region.start, region.start + 4)])
+    # Absolute highlights survive a region reselect (so diff navigation can cross segments)...
+    model.set_region(region)
+    assert model.data(model.index(0, 0), Qt.ItemDataRole.BackgroundRole) == DIFF_BACKGROUND
+    # ...and are cleared only when the caller asks.
+    model.set_highlight_ranges([])
+    assert model.data(model.index(0, 0), Qt.ItemDataRole.BackgroundRole) is None
 
 
 def test_setdata_calls_write_callback(qapp):

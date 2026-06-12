@@ -114,6 +114,26 @@ def test_run_after_program_returns_to_connected_and_clears_ui(controller, qtbot,
     assert cleared.get("map") == []
 
 
+def test_compare_reports_differences(controller, qtbot):
+    _attach(controller, qtbot)
+    # Fake flash starts erased (0xFF). A segment that differs at one byte yields one diff range.
+    segment = (0x0800_0000, b"\xff\xff\x00\xff")
+    with qtbot.waitSignal(controller.compare_done, timeout=4000) as done:
+        controller.compare([segment])
+    result = done.args[0]
+    assert result.matched is False
+    assert result.bytes_differing == 1
+    assert result.first_mismatch == 0x0800_0002
+    assert controller.state is SessionState.ATTACHED
+
+
+def test_compare_matches_when_equal(controller, qtbot):
+    _attach(controller, qtbot)
+    with qtbot.waitSignal(controller.compare_done, timeout=4000) as done:
+        controller.compare([(0x0800_0000, b"\xff\xff\xff\xff")])
+    assert done.args[0].matched is True
+
+
 def test_mass_erase(controller, qtbot):
     _attach(controller, qtbot)
     with qtbot.waitSignal(controller.operation_succeeded, timeout=4000) as ok:
@@ -130,6 +150,45 @@ def test_state_returns_to_base_after_busy(controller, qtbot):
         controller.reset(halt=False)
     assert SessionState.BUSY in states
     assert controller.state is SessionState.ATTACHED
+
+
+def test_worker_compare_error_is_funnelled(qapp):
+    # A backend that fails mid-read must surface through the standard failed() funnel, not crash.
+    from alynprog.core.worker import BackendWorker
+
+    class _Boom:
+        def read_memory(self, addr, size):
+            raise RuntimeError("link lost")
+
+    worker = BackendWorker()
+    worker._backend = _Boom()
+    failures: list[tuple[str, str]] = []
+    worker.failed.connect(lambda op, msg: failures.append((op, msg)))
+    worker.dispatch("compare", ([(0x0800_0000, b"\x00\x00")],))
+    assert failures and failures[0][0] == "compare"
+
+
+def test_worker_compare_can_be_cancelled(qapp):
+    # A cancel that arrives mid-read makes the worker stop and report failure, not a result.
+    from alynprog.core.worker import BackendWorker
+
+    worker = BackendWorker()
+
+    class _Backend:
+        def read_memory(self, addr, size):
+            worker.request_cancel()  # the GUI cancelled while this chunk was being read
+            return bytes(size)
+
+    worker._backend = _Backend()
+    done: list = []
+    failed: list[tuple[str, str]] = []
+    worker.compare_done.connect(done.append)
+    worker.failed.connect(lambda op, msg: failed.append((op, msg)))
+    # 8192 bytes = two 4096-byte chunks, so the loop re-checks the cancel flag after the first read.
+    worker.dispatch("compare", ([(0x0800_0000, bytes(8192))],))
+
+    assert done == []
+    assert failed and failed[0][0] == "compare"
 
 
 def test_image_loads_for_program(tmp_path):

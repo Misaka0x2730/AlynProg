@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
     QStyleOptionViewItem,
 )
 
-from alynprog.ui.panels.hexview.model import HexTableModel
+from alynprog.ui.panels.hexview.model import DIFF_BACKGROUND, HexTableModel
 
 
 class AsciiHighlightDelegate(QStyledItemDelegate):
@@ -49,6 +49,18 @@ class AsciiHighlightDelegate(QStyledItemDelegate):
         painter.setFont(opt.font)
         painter.setPen(opt.palette.color(base_role))
         painter.drawText(rect, align, text)
+
+        # Tint the glyphs of any bytes that differ in a comparison (under the selection highlight).
+        for dlo, dhi in self._model.diff_char_ranges(index.row()):
+            dlo = max(0, min(dlo, len(text)))
+            dhi = max(0, min(dhi, len(text)))
+            if dhi > dlo:
+                x_lo = rect.left() + fm.horizontalAdvance(text[:dlo])
+                x_hi = rect.left() + fm.horizontalAdvance(text[:dhi])
+                seg = QRect(x_lo, rect.top(), x_hi - x_lo, rect.height())
+                painter.fillRect(seg, DIFF_BACKGROUND)
+                painter.setPen(opt.palette.color(base_role))
+                painter.drawText(seg, align, text[dlo:dhi])
 
         hl_row, lo, hi = self._model.ascii_highlight()
         lo = max(0, min(lo, len(text)))

@@ -2,6 +2,57 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>BaseAddressDialog</name>
+    <message>
+        <location filename="../../ui/panels/base_address_dialog.py" line="22"/>
+        <source>Base address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/base_address_dialog.py" line="25"/>
+        <source>address (0x…)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/base_address_dialog.py" line="28"/>
+        <source>Compare the file starting at:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CompareTab</name>
+    <message>
+        <location filename="../../ui/panels/compare_tab.py" line="75"/>
+        <source>Device memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/compare_tab.py" line="101"/>
+        <source>Contents match (%d bytes)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/compare_tab.py" line="103"/>
+        <source>%d byte(s) differ in %d range(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/compare_tab.py" line="108"/>
+        <source>%s — list truncated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/compare_tab.py" line="111"/>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/compare_tab.py" line="113"/>
+        <source>Next difference</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConnectPanel</name>
     <message>
         <location filename="../../ui/panels/connect_panel.py" line="66"/>
@@ -160,28 +211,110 @@
     </message>
 </context>
 <context>
-    <name>HexTableModel</name>
+    <name>FileTab</name>
     <message>
-        <location filename="../../ui/panels/hexview/model.py" line="137"/>
-        <source>ASCII</source>
+        <location filename="../../ui/panels/file_tab.py" line="88"/>
+        <source>Unsaved changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="89"/>
+        <source>Save changes to %s before closing?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="104"/>
+        <location filename="../../ui/panels/file_tab.py" line="121"/>
+        <source>Save failed: %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="106"/>
+        <location filename="../../ui/panels/file_tab.py" line="125"/>
+        <source>Saved %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="114"/>
+        <source>Save firmware as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="132"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="134"/>
+        <source>Save As…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="136"/>
+        <source>Compare…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="151"/>
+        <source>Cannot edit 0x%08X: %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="159"/>
+        <source>Attach to a device to compare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="166"/>
+        <source>Attach to a device before comparing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="184"/>
+        <source>Nothing to compare: the file does not overlap device memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="188"/>
+        <source>Comparing %s with device memory…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="194"/>
+        <source>Comparing with device memory…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="194"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="196"/>
+        <source>Compare</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="232"/>
+        <source>Invalid base address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="261"/>
+        <source>Contents match device memory (%d bytes)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/file_tab.py" line="263"/>
+        <source>%d byte(s) differ in %d range(s)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>HexView</name>
+    <name>HexPane</name>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="59"/>
+        <location filename="../../ui/panels/hexview/view.py" line="64"/>
         <source>address (0x…)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ui/panels/hexview/view.py" line="69"/>
-        <source>Refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ui/panels/hexview/view.py" line="71"/>
-        <source>Save region…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -195,37 +328,58 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="150"/>
+        <location filename="../../ui/panels/hexview/view.py" line="152"/>
         <source>Invalid address: %s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="154"/>
+        <location filename="../../ui/panels/hexview/view.py" line="156"/>
         <source>Address 0x%X is outside the selected region</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>HexTableModel</name>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="191"/>
+        <location filename="../../ui/panels/hexview/model.py" line="211"/>
+        <source>ASCII</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>HexView</name>
+    <message>
+        <location filename="../../ui/panels/hexview/view.py" line="250"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/hexview/view.py" line="252"/>
+        <source>Save region…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/hexview/view.py" line="274"/>
         <source>Save region to file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="191"/>
+        <location filename="../../ui/panels/hexview/view.py" line="274"/>
         <source>Binary (*.bin)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="195"/>
+        <location filename="../../ui/panels/hexview/view.py" line="278"/>
         <source>Saving region to %s…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="203"/>
+        <location filename="../../ui/panels/hexview/view.py" line="286"/>
         <source>Wrote %d byte(s) at 0x%08X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/panels/hexview/view.py" line="207"/>
+        <location filename="../../ui/panels/hexview/view.py" line="289"/>
         <source>Write at 0x%08X failed: %s</source>
         <translation type="unfinished"></translation>
     </message>
@@ -261,93 +415,138 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../ui/main_window.py" line="42"/>
+        <location filename="../../ui/main_window.py" line="52"/>
         <source>Simple Microcontroller Flash Tool</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="71"/>
+        <location filename="../../ui/main_window.py" line="82"/>
         <source>Memory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="71"/>
+        <location filename="../../ui/main_window.py" line="82"/>
         <source>Programming</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="87"/>
+        <location filename="../../ui/main_window.py" line="98"/>
         <source>Target configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="95"/>
+        <location filename="../../ui/main_window.py" line="106"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="101"/>
+        <location filename="../../ui/main_window.py" line="114"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="102"/>
-        <source>Preferences…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ui/main_window.py" line="106"/>
-        <source>Quit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ui/main_window.py" line="110"/>
-        <source>&amp;View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ui/main_window.py" line="111"/>
-        <source>Theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ui/main_window.py" line="117"/>
-        <source>System</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ui/main_window.py" line="118"/>
-        <source>Light</source>
+        <location filename="../../ui/main_window.py" line="115"/>
+        <source>Open…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ui/main_window.py" line="119"/>
-        <source>Dark</source>
+        <source>Open Recent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="131"/>
-        <source>&amp;Help</source>
+        <location filename="../../ui/main_window.py" line="122"/>
+        <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="132"/>
-        <location filename="../../ui/main_window.py" line="168"/>
-        <source>About AlynProg</source>
+        <location filename="../../ui/main_window.py" line="125"/>
+        <source>Save As…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="128"/>
+        <source>Close Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="133"/>
+        <source>Preferences…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ui/main_window.py" line="137"/>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="141"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="142"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="148"/>
+        <source>System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="149"/>
+        <source>Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="150"/>
+        <source>Dark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="162"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="163"/>
+        <location filename="../../ui/main_window.py" line="252"/>
+        <source>About AlynProg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="168"/>
         <source>Disconnected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="145"/>
+        <location filename="../../ui/main_window.py" line="176"/>
         <source>%s done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="170"/>
+        <location filename="../../ui/main_window.py" line="189"/>
+        <source>Open firmware file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="197"/>
+        <source>Cannot open %s: %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="201"/>
+        <source>Opened %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="209"/>
+        <source>(no recent files)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="254"/>
         <source>AlynProg %s
 
 Cross-platform microcontroller flashing utility.
@@ -355,8 +554,26 @@ Backend: Black Magic Probe via GDB/MI.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="177"/>
+        <location filename="../../ui/main_window.py" line="261"/>
         <source>State: %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MemoryWorkArea</name>
+    <message>
+        <location filename="../../ui/panels/workarea.py" line="41"/>
+        <source>Device memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/workarea.py" line="117"/>
+        <source>Open File…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/panels/workarea.py" line="122"/>
+        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

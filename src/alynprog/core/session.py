@@ -37,6 +37,7 @@ class SessionController(QObject):
     registers_ready = Signal(object)  # dict[str, int]
     progress = Signal(str, int, int)  # (op, done, total)
     program_done = Signal(object)  # ProgramResult
+    compare_done = Signal(object)  # MemoryCompareResult
     operation_failed = Signal(str, str)  # (op, message)
     operation_succeeded = Signal(str)  # op
 
@@ -48,6 +49,7 @@ class SessionController(QObject):
         self._state = SessionState.DISCONNECTED
         self._base_state = SessionState.DISCONNECTED
         self._capabilities = None
+        self._memory_map: list = []
 
         self._thread = QThread()
         self._thread.setObjectName("alynprog-backend")
@@ -64,6 +66,7 @@ class SessionController(QObject):
         self._worker.registers_ready.connect(self.registers_ready)
         self._worker.progress.connect(self.progress)
         self._worker.program_done.connect(self.program_done)
+        self._worker.compare_done.connect(self.compare_done)
         self._worker.detached.connect(self._on_detached)
         self._worker.succeeded.connect(self._on_succeeded)
         self._worker.failed.connect(self._on_failed)
@@ -80,6 +83,11 @@ class SessionController(QObject):
     @property
     def capabilities(self):
         return self._capabilities
+
+    @property
+    def memory_map(self) -> list:
+        """The attached target's last-known memory map (empty when not attached)."""
+        return self._memory_map
 
     def _set_state(self, state: SessionState) -> None:
         if state != self._state:
@@ -132,6 +140,14 @@ class SessionController(QObject):
         self._set_state(SessionState.BUSY)
         self._request.emit("save_range", (addr, length, path))
 
+    def compare(self, segments: list[tuple[int, bytes]]) -> None:
+        self._set_state(SessionState.BUSY)
+        self._request.emit("compare", (segments,))
+
+    def cancel_compare(self) -> None:
+        """Ask a running comparison to stop (the worker checks between read chunks)."""
+        self._worker.request_cancel()
+
     def disconnect_probe(self) -> None:
         self._set_state(SessionState.BUSY)
         self._request.emit("disconnect", ())
@@ -150,6 +166,7 @@ class SessionController(QObject):
 
     def _on_attached(self, memory_map, capabilities) -> None:
         self._capabilities = capabilities
+        self._memory_map = list(memory_map)
         self._base_state = SessionState.ATTACHED
         self._set_state(SessionState.ATTACHED)
         self.capabilities_changed.emit(capabilities)
@@ -159,6 +176,7 @@ class SessionController(QObject):
         # The target was detached (e.g. reset+run after programming) but the probe is still
         # connected: return to the "connected, before scan" state and clear stale target/memory UI.
         self._capabilities = capabilities
+        self._memory_map = []
         self._base_state = SessionState.CONNECTED
         self._set_state(SessionState.CONNECTED)
         self.capabilities_changed.emit(capabilities)
@@ -177,6 +195,7 @@ class SessionController(QObject):
 
     def _on_disconnected(self) -> None:
         self._capabilities = None
+        self._memory_map = []
         self._base_state = SessionState.DISCONNECTED
         self._set_state(SessionState.DISCONNECTED)
         # Clear stale target/memory UI left over from the previous connection.

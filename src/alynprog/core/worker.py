@@ -10,9 +10,11 @@ GDB/MI traffic from the transport's reader thread reaches the UI safely.
 from __future__ import annotations
 
 import contextlib
+import threading
 
 from PySide6.QtCore import QObject, Signal, Slot
 
+from alynprog.core.compare import MemoryCompareResult, compare_segment
 from alynprog.core.error_messages import friendly_error
 from alynprog.core.image import FirmwareImage
 from alynprog.core.registry import backend_class
@@ -28,6 +30,7 @@ class BackendWorker(QObject):
     registers_ready = Signal(object)  # dict[str, int]
     progress = Signal(str, int, int)  # (op, done, total)
     program_done = Signal(object)  # ProgramResult
+    compare_done = Signal(object)  # MemoryCompareResult
     detached = Signal(object)  # ProbeCapabilities — target detached (reset+run) but probe connected
     succeeded = Signal(str)  # op
     failed = Signal(str, str)  # (op, message)
@@ -36,6 +39,13 @@ class BackendWorker(QObject):
     def __init__(self) -> None:
         super().__init__()
         self._backend = None
+        # Set from the GUI thread to abort a long, chunked operation between chunks (compare). A
+        # threading.Event is safe to poke across threads without the worker's event loop.
+        self._cancel = threading.Event()
+
+    def request_cancel(self) -> None:
+        """Ask the in-flight cancellable operation to stop. Safe to call from any thread."""
+        self._cancel.set()
 
     # --- dispatch --------------------------------------------------------------
 
@@ -45,6 +55,7 @@ class BackendWorker(QObject):
         if handler is None:
             self.failed.emit(method, f"unknown request: {method}")
             return
+        self._cancel.clear()  # a stale cancel must not abort the next operation
         try:
             handler(*args)
         except Exception as exc:
@@ -117,6 +128,28 @@ class BackendWorker(QObject):
 
     def _do_registers(self) -> None:
         self.registers_ready.emit(self._require().read_registers())
+
+    def _do_compare(self, segments: list[tuple[int, bytes]]) -> None:
+        backend = self._require()
+        chunk = 4096
+        total = sum(len(data) for _addr, data in segments)
+        done = 0
+        results = []
+        for addr, expected in segments:
+            actual = bytearray()
+            offset = 0
+            while offset < len(expected):
+                if self._cancel.is_set():
+                    self.failed.emit("compare", "compare cancelled")
+                    return
+                count = min(chunk, len(expected) - offset)
+                actual += backend.read_memory(addr + offset, count)
+                offset += count
+                done += count
+                self.progress.emit("compare", done, total)
+            results.append(compare_segment(bytes(expected), bytes(actual), addr))
+        self.compare_done.emit(MemoryCompareResult(tuple(results)))
+        self.succeeded.emit("compare")
 
     def _do_save_range(self, addr: int, length: int, path: str) -> None:
         backend = self._require()

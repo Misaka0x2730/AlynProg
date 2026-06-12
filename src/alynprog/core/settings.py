@@ -188,6 +188,23 @@ class Settings:
         del items[_MAX_RECENT:]
         self._s.setValue("program/recent_images", items)
 
+    # --- Firmware files (editor tabs) ------------------------------------------
+
+    @property
+    def recent_files(self) -> list[str]:
+        value = self._s.value("files/recent", [])
+        if isinstance(value, str):
+            return [value] if value else []
+        if value is None:
+            return []
+        return [str(v) for v in value]
+
+    def push_recent_file(self, path: str) -> None:
+        items = [p for p in self.recent_files if p != path]
+        items.insert(0, path)
+        del items[_MAX_RECENT:]
+        self._s.setValue("files/recent", items)
+
     # --- Window state ----------------------------------------------------------
 
     @property

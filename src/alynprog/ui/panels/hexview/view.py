@@ -1,4 +1,10 @@
-"""The central memory hex view widget: region picker, width switch, goto, save, and the table."""
+"""The hex view: a reusable pane plus the live device-memory view built on top of it.
+
+:class:`HexPane` is the source-agnostic widget — a toolbar (region picker, go-to, cell width) over
+a :class:`HexTableModel` table. A subclass binds a data source (device session or file document),
+feeds it regions, and contributes its own toolbar buttons. :class:`HexView` is the device-memory
+subclass; the file-document tab reuses :class:`HexPane` the same way.
+"""
 
 from __future__ import annotations
 
@@ -26,25 +32,24 @@ from alynprog.ui.panels.hexview.model import BYTES_PER_ROW, HexTableModel
 _WIDTHS = [("8-bit", 1), ("16-bit", 2), ("32-bit", 4)]
 
 
-class HexView(QWidget):
+class HexPane(QWidget):
+    """Toolbar (region / go-to / width) plus a hex table over a :class:`HexTableModel`.
+
+    Subclasses bind a data source with :meth:`_bind_source`, push regions in via
+    :meth:`_populate_regions`, and add trailing toolbar buttons by overriding
+    :meth:`_toolbar_extras`.
+    """
+
     logMessage = Signal(str, str)  # (level, text)
 
-    def __init__(
-        self,
-        session: SessionController,
-        settings: Settings | None = None,
-        parent: QWidget | None = None,
-    ) -> None:
+    def __init__(self, settings: Settings | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self._session = session
         self._settings = settings
         self._recent_goto_mem: list[str] = []  # fallback recents when no Settings is provided
         self._model = HexTableModel(self)
-        self._model.set_request_callback(self._session.read_page)
-        self._model.set_write_callback(self._on_edit_write)
-
         self._build_ui()
-        self._wire_session()
+
+    # --- construction ----------------------------------------------------------
 
     def _build_ui(self) -> None:
         self._region_box = QComboBox(self)
@@ -66,19 +71,14 @@ class HexView(QWidget):
             self._width_box.addItem(label, width)
         self._width_box.currentIndexChanged.connect(self._on_width_changed)
 
-        refresh = QPushButton(self.tr("Refresh"), self)
-        refresh.clicked.connect(lambda: self._model.invalidate())
-        save = QPushButton(self.tr("Save region…"), self)
-        save.clicked.connect(self._on_save)
-
         toolbar = QHBoxLayout()
         toolbar.addWidget(QLabel(self.tr("Region:")))
         toolbar.addWidget(self._region_box, 1)
         toolbar.addWidget(QLabel(self.tr("Go to:")))
         toolbar.addWidget(self._goto)
         toolbar.addWidget(self._width_box)
-        toolbar.addWidget(refresh)
-        toolbar.addWidget(save)
+        for widget in self._toolbar_extras():
+            toolbar.addWidget(widget)
 
         self._table = QTableView(self)
         self._table.setModel(self._model)
@@ -93,21 +93,21 @@ class HexView(QWidget):
         self._table.setItemDelegate(AsciiHighlightDelegate(self._model, self._table))
         self._table.selectionModel().currentChanged.connect(self._on_current_changed)
 
-        layout = QVBoxLayout(self)
-        layout.addLayout(toolbar)
-        layout.addWidget(self._table)
+        self._layout = QVBoxLayout(self)
+        self._layout.addLayout(toolbar)
+        self._layout.addWidget(self._table)
 
-    def _wire_session(self) -> None:
-        self._session.memory_map_changed.connect(self._on_memory_map)
-        self._session.memory_page_ready.connect(self._model.fill_page)
-        self._session.memory_written.connect(self._on_write_done)
-        # Programming and erasing change device memory; drop stale cached pages.
-        self._session.program_done.connect(lambda _result: self._model.invalidate())
+    def _toolbar_extras(self) -> list[QWidget]:
+        """Trailing toolbar widgets; overridden by subclasses. Called once during construction."""
+        return []
 
-    # --- session reactions -----------------------------------------------------
+    # --- source binding & regions ----------------------------------------------
 
-    def _on_memory_map(self, regions: list[MemoryRegion]) -> None:
-        self._model.set_memory_map(regions)
+    def _bind_source(self, request, write) -> None:
+        self._model.set_request_callback(request)
+        self._model.set_write_callback(write)
+
+    def _populate_regions(self, regions: list[MemoryRegion]) -> None:
         self._region_box.blockSignals(True)
         self._region_box.clear()
         for region in regions:
@@ -118,7 +118,7 @@ class HexView(QWidget):
             self._region_box.setCurrentIndex(0)
             self._on_region_changed(0)
         else:
-            self._model.set_region(None)  # clear the table when there is no target/memory map
+            self._model.set_region(None)  # clear the table when there are no regions
 
     def _on_region_changed(self, _index: int) -> None:
         region = self._region_box.currentData()
@@ -139,6 +139,8 @@ class HexView(QWidget):
         hi = lo + self._model.width
         self._model.set_ascii_highlight(current.row(), lo, hi)
 
+    # --- go to -----------------------------------------------------------------
+
     def _on_goto(self) -> None:
         text = self._goto.currentText().strip()
         region = self._model.region
@@ -154,10 +156,42 @@ class HexView(QWidget):
                 "warn", self.tr("Address 0x%X is outside the selected region") % addr
             )
             return
+        self._scroll_to_address(addr)
+        self._push_recent_goto(f"0x{addr:08X}")
+
+    def _scroll_to_address(self, addr: int) -> bool:
+        """Scroll the table so *addr* is the top row and select it. Returns False if off-region."""
+        region = self._model.region
+        if region is None or not region.contains(addr):
+            return False
         row = (addr - region.start) // BYTES_PER_ROW
         self._table.scrollTo(self._model.index(row, 0), QAbstractItemView.ScrollHint.PositionAtTop)
         self._table.selectRow(row)
-        self._push_recent_goto(f"0x{addr:08X}")
+        return True
+
+    def goto_address(self, addr: int) -> bool:
+        """Select the region containing *addr* (if needed) and scroll to it."""
+        for i in range(self._region_box.count()):
+            region = self._region_box.itemData(i)
+            if region is not None and region.contains(addr):
+                if self._region_box.currentIndex() != i:
+                    self._region_box.setCurrentIndex(i)
+                return self._scroll_to_address(addr)
+        return False
+
+    def sync_with(self, other: HexPane) -> None:
+        """Keep this pane's scroll position, region and cell width locked to *other* (both ways).
+
+        Qt only re-emits ``valueChanged`` / ``currentIndexChanged`` when the value actually changes,
+        so the bidirectional connections converge instead of looping.
+        """
+        here, there = self._table.verticalScrollBar(), other._table.verticalScrollBar()
+        here.valueChanged.connect(there.setValue)
+        there.valueChanged.connect(here.setValue)
+        self._region_box.currentIndexChanged.connect(other._region_box.setCurrentIndex)
+        other._region_box.currentIndexChanged.connect(self._region_box.setCurrentIndex)
+        self._width_box.currentIndexChanged.connect(other._width_box.setCurrentIndex)
+        other._width_box.currentIndexChanged.connect(self._width_box.setCurrentIndex)
 
     def _recent_goto(self) -> list[str]:
         if self._settings is not None:
@@ -183,6 +217,55 @@ class HexView(QWidget):
         self._goto.setEditText(current)
         self._goto.blockSignals(False)
 
+    # --- helpers ---------------------------------------------------------------
+
+    def _resize_columns(self) -> None:
+        # Size from the actual font so every hex/ASCII glyph fits (no elision that would shift the
+        # ASCII highlight).
+        fm = QFontMetrics(self._table.font())
+        char_w = fm.horizontalAdvance("0")
+        padding = char_w * 2
+        hex_cols = BYTES_PER_ROW // self._model.width
+        hex_cell = char_w * (self._model.width * 2) + padding
+        for col in range(hex_cols):
+            self._table.setColumnWidth(col, hex_cell)
+        self._table.setColumnWidth(hex_cols, char_w * BYTES_PER_ROW + padding)  # ASCII column
+
+
+class HexView(HexPane):
+    """The live device-memory hex view, with Refresh and Save-region."""
+
+    def __init__(
+        self,
+        session: SessionController,
+        settings: Settings | None = None,
+        parent: QWidget | None = None,
+    ) -> None:
+        super().__init__(settings, parent)
+        self._session = session
+        self._bind_source(self._session.read_page, self._on_edit_write)
+        self._wire_session()
+
+    def _toolbar_extras(self) -> list[QWidget]:
+        refresh = QPushButton(self.tr("Refresh"), self)
+        refresh.clicked.connect(lambda: self._model.invalidate())
+        save = QPushButton(self.tr("Save region…"), self)
+        save.clicked.connect(self._on_save)
+        return [refresh, save]
+
+    def _wire_session(self) -> None:
+        self._session.memory_map_changed.connect(self._on_memory_map)
+        self._session.memory_page_ready.connect(self._model.fill_page)
+        self._session.memory_written.connect(self._on_write_done)
+        # Programming and erasing change device memory; drop stale cached pages.
+        self._session.program_done.connect(lambda _result: self._model.invalidate())
+
+    # --- session reactions -----------------------------------------------------
+
+    def _on_memory_map(self, regions: list[MemoryRegion]) -> None:
+        self._model.set_memory_map(regions)
+        self._populate_regions(regions)
+
     def _on_save(self) -> None:
         region = self._model.region
         if region is None:
@@ -198,28 +281,13 @@ class HexView(QWidget):
         self._session.write_bytes(addr, data)
 
     def _on_write_done(self, addr: int, length: int, ok: bool, error: str) -> None:
+        self._model.invalidate(addr, length)
         if ok:
-            self._model.invalidate(addr, length)
             self.logMessage.emit("info", self.tr("Wrote %d byte(s) at 0x%08X") % (length, addr))
         else:
-            self._model.invalidate(addr, length)
             self.logMessage.emit(
                 "error", self.tr("Write at 0x%08X failed: %s") % (addr, error or "unknown")
             )
-
-    # --- helpers ---------------------------------------------------------------
-
-    def _resize_columns(self) -> None:
-        # Size from the actual font so every hex/ASCII glyph fits (no elision that would shift the
-        # ASCII highlight).
-        fm = QFontMetrics(self._table.font())
-        char_w = fm.horizontalAdvance("0")
-        padding = char_w * 2
-        hex_cols = BYTES_PER_ROW // self._model.width
-        hex_cell = char_w * (self._model.width * 2) + padding
-        for col in range(hex_cols):
-            self._table.setColumnWidth(col, hex_cell)
-        self._table.setColumnWidth(hex_cols, char_w * BYTES_PER_ROW + padding)  # ASCII column
 
     def refresh(self) -> None:
         """Drop cached pages and re-read the current region from the device."""

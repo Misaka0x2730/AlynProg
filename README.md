@@ -8,6 +8,9 @@ What it can do:
 - Connect to a [Black Magic Probe](https://black-magic.org/), scan for targets and attach —
   driven through `arm-none-eabi-gdb` (GDB/MI).
 - View **and edit** target memory in a hex table.
+- Open firmware files (ELF / HEX / BIN) in their own tabs, navigate and edit them in the same hex
+  view, save them back, and compare their contents against device memory (a raw `.bin` is asked for
+  its start address before comparing).
 - Flash ELF / HEX / BIN firmware images; full and sector erase.
 - Live operation log.
 - Light / dark / system themes (PySide6 / Qt 6 UI).

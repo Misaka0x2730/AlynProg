@@ -48,6 +48,17 @@ def test_recent_images_dedup_and_cap(temp_settings):
     assert len(set(recent)) == len(recent)
 
 
+def test_recent_files_dedup_and_cap(temp_settings):
+    assert temp_settings.recent_files == []
+    for i in range(15):
+        temp_settings.push_recent_file(f"/fw/{i}.hex")
+    temp_settings.push_recent_file("/fw/0.hex")  # move to front, no dup
+    recent = temp_settings.recent_files
+    assert len(recent) == 10
+    assert recent[0] == "/fw/0.hex"
+    assert len(set(recent)) == len(recent)
+
+
 def test_recent_goto_dedup_and_cap(temp_settings):
     assert temp_settings.recent_goto_addresses == []
     for i in range(8):
