@@ -23,6 +23,7 @@ from alynprog.core.image import ImageKind
 from alynprog.core.session import SessionController, SessionState
 from alynprog.core.settings import Settings
 from alynprog.ui.panels.base_address_dialog import BaseAddressDialog
+from alynprog.ui.panels.hexview.font import HexFontController
 from alynprog.ui.panels.hexview.sources import FileDocumentSource
 from alynprog.ui.panels.hexview.view import HexPane
 
@@ -40,9 +41,10 @@ class FileTab(HexPane):
         document: FirmwareDocument,
         session: SessionController,
         settings: Settings | None = None,
+        font_controller: HexFontController | None = None,
         parent: QWidget | None = None,
     ) -> None:
-        super().__init__(settings, parent)
+        super().__init__(settings, font_controller, parent)
         self._document = document
         self._session = session
         self._source = FileDocumentSource(document, self)

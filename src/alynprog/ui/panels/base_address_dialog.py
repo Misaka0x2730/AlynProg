@@ -17,7 +17,12 @@ from PySide6.QtWidgets import (
 
 
 class BaseAddressDialog(QDialog):
-    def __init__(self, default_addr: int, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        default_addr: int,
+        parent: QWidget | None = None,
+        prompt: str | None = None,
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle(self.tr("Base address"))
 
@@ -25,7 +30,7 @@ class BaseAddressDialog(QDialog):
         self._edit.setPlaceholderText(self.tr("address (0x…)"))
 
         form = QFormLayout()
-        form.addRow(self.tr("Compare the file starting at:"), self._edit)
+        form.addRow(prompt or self.tr("Compare the file starting at:"), self._edit)
 
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel, self

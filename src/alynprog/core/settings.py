@@ -149,6 +149,15 @@ class Settings:
         self._s.setValue("memory/hex_width", int(value))
 
     @property
+    def hex_font_point_size(self) -> int:
+        """The hex-view font size in points; 0 means "derive a default from the system font"."""
+        return _to_int(self._s.value("memory/hex_font_point_size"), 0)
+
+    @hex_font_point_size.setter
+    def hex_font_point_size(self, value: int) -> None:
+        self._s.setValue("memory/hex_font_point_size", int(value))
+
+    @property
     def recent_goto_addresses(self) -> list[str]:
         value = self._s.value("memory/recent_goto", [])
         if isinstance(value, str):

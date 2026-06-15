@@ -8,8 +8,8 @@ subclass; the file-document tab reuses :class:`HexPane` the same way.
 
 from __future__ import annotations
 
-from PySide6.QtCore import Signal
-from PySide6.QtGui import QFontDatabase, QFontMetrics
+from PySide6.QtCore import QEvent, Qt, Signal
+from PySide6.QtGui import QFontMetrics
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QComboBox,
@@ -27,6 +27,12 @@ from alynprog.core.backend import MemoryRegion, RegionKind
 from alynprog.core.session import SessionController
 from alynprog.core.settings import Settings
 from alynprog.ui.panels.hexview.ascii_delegate import AsciiHighlightDelegate
+from alynprog.ui.panels.hexview.font import (
+    HexFontController,
+    clamp_point_size,
+    default_point_size,
+    fixed_font,
+)
 from alynprog.ui.panels.hexview.model import BYTES_PER_ROW, HexTableModel
 
 _WIDTHS = [("8-bit", 1), ("16-bit", 2), ("32-bit", 4)]
@@ -42,12 +48,32 @@ class HexPane(QWidget):
 
     logMessage = Signal(str, str)  # (level, text)
 
-    def __init__(self, settings: Settings | None = None, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        font_controller: HexFontController | None = None,
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self._settings = settings
         self._recent_goto_mem: list[str] = []  # fallback recents when no Settings is provided
         self._model = HexTableModel(self)
+        self._font_controller = font_controller
+        self._point_size = self._initial_point_size()
         self._build_ui()
+        if font_controller is not None:
+            # Re-font live when the shared size changes (status-bar slider, zoom actions, Ctrl+wheel
+            # in another pane). Each open pane listens independently so they all stay in lockstep.
+            font_controller.sizeChanged.connect(self._apply_font_point_size)
+
+    def _initial_point_size(self) -> int:
+        if self._font_controller is not None:
+            return self._font_controller.point_size
+        if self._settings is not None and self._settings.hex_font_point_size > 0:
+            # Clamp here too: a controller always clamps, but a controller-less pane reads the raw
+            # persisted value directly, so guard against a stale/out-of-range setting.
+            return clamp_point_size(self._settings.hex_font_point_size)
+        return default_point_size()
 
     # --- construction ----------------------------------------------------------
 
@@ -82,16 +108,17 @@ class HexPane(QWidget):
 
         self._table = QTableView(self)
         self._table.setModel(self._model)
-        # A guaranteed fixed-width font keeps hex/ASCII columns aligned across platforms.
-        self._table.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
         self._table.setEditTriggers(
             QAbstractItemView.EditTrigger.DoubleClicked
             | QAbstractItemView.EditTrigger.EditKeyPressed
         )
-        self._table.verticalHeader().setDefaultSectionSize(22)
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
         self._table.setItemDelegate(AsciiHighlightDelegate(self._model, self._table))
         self._table.selectionModel().currentChanged.connect(self._on_current_changed)
+        # The fixed-width font (kept aligned across platforms) and the matching row height are both
+        # driven by the user-adjustable point size; Ctrl+wheel over the table zooms it too.
+        self._apply_font_point_size(self._point_size)
+        self._table.viewport().installEventFilter(self)
 
         self._layout = QVBoxLayout(self)
         self._layout.addLayout(toolbar)
@@ -217,6 +244,37 @@ class HexPane(QWidget):
         self._goto.setEditText(current)
         self._goto.blockSignals(False)
 
+    # --- font size -------------------------------------------------------------
+
+    def _apply_font_point_size(self, point_size: int) -> None:
+        """Re-font the table at *point_size* and re-derive the row height and column widths."""
+        self._point_size = point_size
+        font = fixed_font(point_size)
+        self._table.setFont(font)
+        # Grow the row height with the font so taller glyphs are not clipped (a little padding keeps
+        # the selection highlight off the cell borders).
+        self._table.verticalHeader().setDefaultSectionSize(QFontMetrics(font).height() + 6)
+        self._resize_columns()
+
+    def _zoom(self, delta: int) -> None:
+        """Step the font size by *delta* points — shared via the controller when one is wired."""
+        if self._font_controller is not None:
+            self._font_controller.step(delta)
+        else:
+            self._apply_font_point_size(clamp_point_size(self._point_size + delta))
+
+    def eventFilter(self, watched, event) -> bool:
+        # Ctrl+wheel over the table zooms the content, the familiar gesture for hex/text viewers.
+        if (
+            event.type() == QEvent.Type.Wheel
+            and event.modifiers() & Qt.KeyboardModifier.ControlModifier
+        ):
+            delta = event.angleDelta().y()
+            if delta:
+                self._zoom(1 if delta > 0 else -1)
+            return True
+        return super().eventFilter(watched, event)
+
     # --- helpers ---------------------------------------------------------------
 
     def _resize_columns(self) -> None:
@@ -239,9 +297,10 @@ class HexView(HexPane):
         self,
         session: SessionController,
         settings: Settings | None = None,
+        font_controller: HexFontController | None = None,
         parent: QWidget | None = None,
     ) -> None:
-        super().__init__(settings, parent)
+        super().__init__(settings, font_controller, parent)
         self._session = session
         self._bind_source(self._session.read_page, self._on_edit_write)
         self._wire_session()

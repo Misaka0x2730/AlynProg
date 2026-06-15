@@ -6,6 +6,7 @@ from alynprog.core.compare import (
     DiffRange,
     MemoryCompareResult,
     SegmentCompare,
+    compare_buffers,
     compare_segment,
     diff_ranges,
 )
@@ -94,3 +95,51 @@ def test_result_all_match():
     )
     assert result.matched is True
     assert result.first_mismatch is None
+
+
+# --- compare_buffers (file-vs-file) -------------------------------------------
+
+
+def test_compare_buffers_diffs_overlapping_region():
+    left = [(0x0800_0000, b"\x01\x02\x03\x04")]
+    right = [(0x0800_0000, b"\x01\xff\x03\xff")]
+    result = compare_buffers(left, right)
+    assert result.bytes_compared == 4
+    assert result.range_count == 2  # offsets 1 and 3 differ
+    assert result.matched is False
+    # Left bytes land in `actual`, right bytes in `expected` (the side-by-side view's convention).
+    assert result.segments[0].actual == b"\x01\x02\x03\x04"
+    assert result.segments[0].expected == b"\x01\xff\x03\xff"
+
+
+def test_compare_buffers_only_compares_the_overlap():
+    # Left runs 0x100..0x108, right 0x104..0x10C -> only the 4-byte overlap 0x104..0x108 compares.
+    left = [(0x100, bytes(8))]
+    right = [(0x104, b"\xff\xff\xff\xff\xff\xff\xff\xff")]
+    result = compare_buffers(left, right)
+    assert result.bytes_compared == 4
+    assert result.segments[0].addr == 0x104
+    assert result.bytes_differing == 4
+
+
+def test_compare_buffers_no_overlap_is_empty():
+    left = [(0x0000_0000, b"\x00\x00")]  # e.g. a .bin opened at offset 0
+    right = [(0x0800_0000, b"\x00\x00")]  # vs a .hex at flash
+    assert compare_buffers(left, right).segments == ()
+
+
+def test_compare_buffers_matches_identical_files():
+    left = [(0x0, b"firmware")]
+    right = [(0x0, b"firmware")]
+    result = compare_buffers(left, right)
+    assert result.matched is True
+    assert result.bytes_compared == 8
+
+
+def test_compare_buffers_multiple_segments_sorted():
+    left = [(0x2000, b"\xaa\xaa"), (0x1000, b"\xbb\xbb")]
+    right = [(0x1000, b"\xbb\x00"), (0x2000, b"\xaa\xaa")]
+    result = compare_buffers(left, right)
+    # One window per overlapping segment pair, emitted in ascending address order.
+    assert [seg.addr for seg in result.segments] == [0x1000, 0x2000]
+    assert result.bytes_differing == 1  # only the second byte of the 0x1000 segment

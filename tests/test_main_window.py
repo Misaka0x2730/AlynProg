@@ -73,3 +73,26 @@ def test_recent_menu_skips_missing_files(window, temp_settings, tmp_path):
 def test_open_recent_referenced(window):
     # The module exposes the open filter the dialog uses; a light guard against accidental edits.
     assert "*.elf" in mw_mod._OPEN_FILTER
+
+
+def test_nav_rail_shows_icons_and_switches_pages(window):
+    strip = window._tabstrip
+    assert strip.count() == 2
+    # Icon-only rail: no visible text, names kept as tooltips, every row carries a rendered glyph.
+    assert [strip.item(i).text() for i in range(2)] == ["", ""]
+    assert [strip.item(i).toolTip() for i in range(2)] == ["Memory", "Programming"]
+    assert all(not strip.item(i).icon().isNull() for i in range(2))
+
+    assert window._pages.currentIndex() == 0
+    strip.setCurrentRow(1)
+    assert window._pages.currentIndex() == 1  # Programming page
+
+
+def test_nav_icons_retint_on_palette_change(window):
+    from PySide6.QtCore import QEvent
+
+    before = window._tabstrip.item(0).icon().cacheKey()
+    # A palette flip (theme switch) must rebuild the baked glyphs so they match the new text colour.
+    window.changeEvent(QEvent(QEvent.Type.PaletteChange))
+    after = window._tabstrip.item(0).icon().cacheKey()
+    assert before != after

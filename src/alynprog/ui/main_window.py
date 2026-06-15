@@ -10,10 +10,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QEvent, QSize, Qt
 from PySide6.QtWidgets import (
     QDockWidget,
     QFileDialog,
+    QListView,
     QListWidget,
     QListWidgetItem,
     QMainWindow,
@@ -28,7 +29,7 @@ from alynprog.core.errors import ImageError
 from alynprog.core.session import SessionController, SessionState
 from alynprog.core.settings import Settings
 from alynprog.ui.panels.connect_panel import ConnectPanel
-from alynprog.ui.panels.hexview import HexView
+from alynprog.ui.panels.hexview import HexFontController, HexView
 from alynprog.ui.panels.log_panel import LogPanel
 from alynprog.ui.panels.preferences import PreferencesDialog
 from alynprog.ui.panels.program_panel import ProgramPanel
@@ -55,9 +56,15 @@ class MainWindow(QMainWindow):
 
         self._session = SessionController(self)
 
+        # One shared font size for every hex pane (device view, file tabs, compare halves), driven
+        # by the status-bar slider and the View-menu zoom actions and persisted across runs.
+        self._hex_font = HexFontController(self._settings, self)
+
         self._log = LogPanel(self)
-        self._hexview = HexView(self._session, self._settings, self)
-        self._workarea = MemoryWorkArea(self._hexview, self._session, self._settings, self)
+        self._hexview = HexView(self._session, self._settings, self._hex_font, self)
+        self._workarea = MemoryWorkArea(
+            self._hexview, self._session, self._settings, self._hex_font, self
+        )
         self._program = ProgramPanel(self._session, self._settings, self)
         self._connect = ConnectPanel(self._session, self._settings, use_fake=use_fake, parent=self)
 
@@ -76,11 +83,31 @@ class MainWindow(QMainWindow):
         self._pages.addWidget(self._workarea)
         self._pages.addWidget(self._program)
 
+        # A slim icon rail: each page is a centred, theme-coloured glyph (label kept as a tooltip).
         self._tabstrip = QListWidget(self)
-        self._tabstrip.setFixedWidth(120)
-        self._tabstrip.setIconSize(QSize(24, 24))
-        for label in (self.tr("Memory"), self.tr("Programming")):
-            QListWidgetItem(label, self._tabstrip)
+        self._tabstrip.setViewMode(QListView.ViewMode.IconMode)
+        self._tabstrip.setMovement(QListView.Movement.Static)
+        self._tabstrip.setFlow(QListView.Flow.TopToBottom)
+        self._tabstrip.setWrapping(False)
+        self._tabstrip.setDragDropMode(QListWidget.DragDropMode.NoDragDrop)
+        self._tabstrip.setUniformItemSizes(True)
+        self._tabstrip.setSpacing(2)
+        self._tabstrip.setIconSize(QSize(26, 26))
+        self._tabstrip.setFixedWidth(64)
+        # The rail is exactly item-width; suppress the stray horizontal scrollbar IconMode would
+        # otherwise show when the item plus frame margins nudge past the viewport.
+        self._tabstrip.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
+        self._nav_items: list[QListWidgetItem] = []
+        for tooltip in (self.tr("Memory"), self.tr("Programming")):
+            item = QListWidgetItem(self._tabstrip)
+            item.setToolTip(tooltip)
+            item.setData(Qt.ItemDataRole.AccessibleTextRole, tooltip)
+            # A full-strip-width hint lets IconMode centre the glyph horizontally on the rail.
+            item.setSizeHint(QSize(60, 46))
+            self._nav_items.append(item)
+        self._refresh_nav_icons()
+
         self._tabstrip.setCurrentRow(0)
         self._tabstrip.currentRowChanged.connect(self._pages.setCurrentIndex)
         self._tabstrip.currentRowChanged.connect(self._on_tab_changed)
@@ -93,6 +120,25 @@ class MainWindow(QMainWindow):
         layout.addWidget(self._tabstrip)
         layout.addWidget(self._pages, 1)
         self.setCentralWidget(central)
+
+    def _refresh_nav_icons(self) -> None:
+        """(Re)build the nav-rail icons in the current palette's text/highlight colours."""
+        from PySide6.QtGui import QPalette
+
+        from alynprog.ui.icons import MEMORY_SVG, PROGRAMMING_SVG, nav_icon
+
+        palette = self._tabstrip.palette()
+        normal = palette.color(QPalette.ColorRole.Text)
+        selected = palette.color(QPalette.ColorRole.HighlightedText)
+        for item, svg in zip(self._nav_items, (MEMORY_SVG, PROGRAMMING_SVG), strict=True):
+            item.setIcon(nav_icon(svg, normal, selected))
+
+    def changeEvent(self, event) -> None:
+        # The nav-rail glyphs are baked pixmaps, so re-tint them whenever the palette flips
+        # (theme menu, Preferences, or the OS switching light/dark under "System").
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.PaletteChange and getattr(self, "_nav_items", None):
+            self._refresh_nav_icons()
 
     def _build_docks(self) -> None:
         self._config_dock = QDockWidget(self.tr("Target configuration"), self)
@@ -156,6 +202,17 @@ class MainWindow(QMainWindow):
             group.addAction(action)
 
         view_menu.addSeparator()
+        zoom_in = view_menu.addAction(self.tr("Increase Font Size"))
+        zoom_in.setShortcut(QKeySequence.StandardKey.ZoomIn)
+        zoom_in.triggered.connect(lambda: self._hex_font.step(1))
+        zoom_out = view_menu.addAction(self.tr("Decrease Font Size"))
+        zoom_out.setShortcut(QKeySequence.StandardKey.ZoomOut)
+        zoom_out.triggered.connect(lambda: self._hex_font.step(-1))
+        zoom_reset = view_menu.addAction(self.tr("Reset Font Size"))
+        zoom_reset.setShortcut("Ctrl+0")
+        zoom_reset.triggered.connect(self._hex_font.reset)
+
+        view_menu.addSeparator()
         view_menu.addAction(self._config_dock.toggleViewAction())
         view_menu.addAction(self._log_dock.toggleViewAction())
 
@@ -166,6 +223,44 @@ class MainWindow(QMainWindow):
 
     def _build_statusbar(self) -> None:
         self.statusBar().showMessage(self.tr("Disconnected"))
+        self._build_zoom_control()
+
+    def _build_zoom_control(self) -> None:
+        """A small font-size slider, pinned to the right of the status bar, for the hex views.
+
+        The caption, slider and readout are added as three separate permanent widgets so the status
+        bar sizes each to its own width and keeps them snug; wrapping them in a stretched container
+        would let the labels expand and drift the caption away from the slider.
+        """
+        from PySide6.QtWidgets import QLabel, QSlider
+
+        from alynprog.ui.panels.hexview.font import MAX_POINT_SIZE, MIN_POINT_SIZE
+
+        caption = QLabel(self.tr("Font:"), self)
+        self._zoom_slider = QSlider(Qt.Orientation.Horizontal, self)
+        self._zoom_slider.setRange(MIN_POINT_SIZE, MAX_POINT_SIZE)
+        self._zoom_slider.setValue(self._hex_font.point_size)
+        self._zoom_slider.setFixedWidth(120)
+        self._zoom_slider.setToolTip(self.tr("Memory / file view font size"))
+        self._zoom_value = QLabel(self)
+        self._zoom_value.setMinimumWidth(self._zoom_value.fontMetrics().horizontalAdvance("00 pt"))
+
+        self.statusBar().addPermanentWidget(caption)
+        self.statusBar().addPermanentWidget(self._zoom_slider)
+        self.statusBar().addPermanentWidget(self._zoom_value)
+
+        self._zoom_slider.valueChanged.connect(self._hex_font.set_point_size)
+        self._hex_font.sizeChanged.connect(self._on_hex_font_size_changed)
+        self._on_hex_font_size_changed(self._hex_font.point_size)
+
+    def _on_hex_font_size_changed(self, point_size: int) -> None:
+        # Reflect the size back onto the slider (it may have changed via a zoom action or
+        # Ctrl+wheel) without bouncing the signal back into the controller.
+        if self._zoom_slider.value() != point_size:
+            self._zoom_slider.blockSignals(True)
+            self._zoom_slider.setValue(point_size)
+            self._zoom_slider.blockSignals(False)
+        self._zoom_value.setText(self.tr("%d pt") % point_size)
 
     def _wire_signals(self) -> None:
         self._session.log_line.connect(self._log.log_stream)
@@ -247,14 +342,15 @@ class MainWindow(QMainWindow):
     def _about(self) -> None:
         from alynprog import __version__
 
+        repo_url = "https://github.com/Misaka0x2730/AlynProg"
+        description = self.tr("Universal MCU programmer with pyOCD and Black Magic Probe support.")
+        # Rich text so the repository link renders as a clickable, browser-opening hyperlink.
         QMessageBox.about(
             self,
             self.tr("About AlynProg"),
-            self.tr(
-                "AlynProg %s\n\nCross-platform microcontroller flashing utility.\n"
-                "Backend: Black Magic Probe via GDB/MI."
-            )
-            % __version__,
+            f"<p><b>AlynProg</b> {__version__}</p>"
+            f"<p>{description}</p>"
+            f'<p><a href="{repo_url}">{repo_url}</a></p>',
         )
 
     def _on_state(self, state: SessionState) -> None:

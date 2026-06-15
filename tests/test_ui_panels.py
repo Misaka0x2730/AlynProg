@@ -60,6 +60,19 @@ def test_program_panel_erase_selected_sectors(qtbot, controller, temp_settings):
         panel._on_erase_selected_sectors()
 
 
+def test_format_sector_size_uses_bytes_below_1kib():
+    from alynprog.ui.panels.program_panel import _format_sector_size
+
+    # The HC32F460 last sector is 1020 B; show it in bytes, not "0.996094 KiB".
+    assert _format_sector_size(1020) == "1020 B"
+    assert _format_sector_size(512) == "512 B"
+    assert _format_sector_size(1023) == "1023 B"
+    # 1 KiB and up stay in KiB, trimmed cleanly.
+    assert _format_sector_size(1024) == "1 KiB"
+    assert _format_sector_size(1536) == "1.5 KiB"
+    assert _format_sector_size(16 * 1024) == "16 KiB"
+
+
 def test_program_panel_base_addr_only_for_bin(qtbot, controller, temp_settings):
     panel = ProgramPanel(controller, temp_settings)
     qtbot.addWidget(panel)

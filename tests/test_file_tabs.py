@@ -277,9 +277,9 @@ def test_compare_opens_split_result_tab(qtbot, controller, temp_settings, tmp_pa
 
     bg = Qt.ItemDataRole.BackgroundRole
     # The differing byte (offset 2) is tinted in BOTH halves; the matching byte in neither.
-    assert compare._device._model.data(compare._device._model.index(0, 2), bg) is not None
-    assert compare._file._model.data(compare._file._model.index(0, 2), bg) is not None
-    assert compare._device._model.data(compare._device._model.index(0, 0), bg) is None
+    assert compare._left._model.data(compare._left._model.index(0, 2), bg) is not None
+    assert compare._right._model.data(compare._right._model.index(0, 2), bg) is not None
+    assert compare._left._model.data(compare._left._model.index(0, 0), bg) is None
     assert compare._next_btn.isEnabled()
 
 
@@ -316,7 +316,7 @@ def test_compare_match_opens_tab_with_no_diffs(qtbot, controller, temp_settings,
     assert isinstance(compare, CompareTab)
     assert not compare._next_btn.isEnabled()  # nothing to step through
     bg = Qt.ItemDataRole.BackgroundRole
-    assert compare._device._model.data(compare._device._model.index(0, 0), bg) is None
+    assert compare._left._model.data(compare._left._model.index(0, 0), bg) is None
 
 
 def test_compare_panes_scroll_and_width_stay_in_sync(qtbot, controller, temp_settings, tmp_path):
@@ -327,8 +327,8 @@ def test_compare_panes_scroll_and_width_stay_in_sync(qtbot, controller, temp_set
     compare = _run_compare(area, tab, qtbot, controller)
 
     # Changing the cell width on one half mirrors onto the other.
-    compare._device._width_box.setCurrentIndex(2)  # 32-bit
-    assert compare._file._width_box.currentIndex() == 2
+    compare._left._width_box.setCurrentIndex(2)  # 32-bit
+    assert compare._right._width_box.currentIndex() == 2
 
 
 def test_compare_tab_is_closable(qtbot, controller, temp_settings, tmp_path):
@@ -386,3 +386,192 @@ def test_base_address_dialog_parses_hex(qtbot):
     assert dialog.base_address() is None
     dialog._edit.setText("0x20000000")
     assert dialog.base_address() == 0x2000_0000
+
+
+# --- compare with… (tab-to-tab) -----------------------------------------------
+
+
+def _press(pos, button=Qt.MouseButton.LeftButton):
+    from PySide6.QtCore import QEvent, QPointF
+    from PySide6.QtGui import QMouseEvent
+
+    point = QPointF(pos)
+    return QMouseEvent(
+        QEvent.Type.MouseButtonPress,
+        point,
+        point,  # global pos; the 6-arg form avoids the deprecated 5-arg constructor
+        button,
+        button,
+        Qt.KeyboardModifier.NoModifier,
+    )
+
+
+def _open_named_bin(area, tmp_path, name, data):
+    p = tmp_path / name
+    p.write_bytes(data)
+    return area.open_document(FirmwareDocument.open(p))
+
+
+def test_compare_with_needs_two_comparable_tabs(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    # Only the device tab: nothing to compare against, so no "Compare with…".
+    labels = [a.text() for a in area._build_context_menu(0).actions() if a.text()]
+    assert "Compare with…" not in labels
+    _open_bin(area, tmp_path)  # device + one file -> two comparable tabs
+    labels = [a.text() for a in area._build_context_menu(0).actions() if a.text()]
+    assert "Compare with…" in labels
+
+
+def test_file_to_file_compare_opens_result_tab(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    tab_a = _open_named_bin(area, tmp_path, "a.bin", b"\x01\x02\x03\x04")
+    tab_b = _open_named_bin(area, tmp_path, "b.bin", b"\x01\xff\x03\x04")
+
+    area._run_tab_compare(tab_a, tab_b)
+    compare = area.currentWidget()
+    assert isinstance(compare, CompareTab)
+    assert area.tabText(area.indexOf(compare)) == "Compare: a.bin ↔ b.bin"
+    assert area.count() == 4  # device + two files + compare
+
+    bg = Qt.ItemDataRole.BackgroundRole
+    # Byte 1 differs and is tinted in both halves; byte 0 matches and is not.
+    assert compare._left._model.data(compare._left._model.index(0, 1), bg) is not None
+    assert compare._right._model.data(compare._right._model.index(0, 1), bg) is not None
+    assert compare._left._model.data(compare._left._model.index(0, 0), bg) is None
+
+
+def _hex_at(path, addr, data):
+    from intelhex import IntelHex
+
+    ih = IntelHex()
+    ih.puts(addr, data)
+    ih.write_hex_file(str(path))
+    return path
+
+
+def test_file_to_file_no_overlap_opens_no_tab(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    tab_a = _open_named_bin(area, tmp_path, "a.bin", b"\x00\x01\x02\x03")
+    hex_path = _hex_at(tmp_path / "b.hex", 0x0800_0000, b"\x00\x01\x02\x03")  # at flash
+    tab_b = area.open_document(FirmwareDocument.open(hex_path))
+    area._ask_bin_base = lambda tab: 0  # keep a.bin at 0 -> no overlap with the hex at flash
+
+    logs: list[tuple[str, str]] = []
+    area.logMessage.connect(lambda level, msg: logs.append((level, msg)))
+    area._run_tab_compare(tab_a, tab_b)
+
+    assert not isinstance(area.currentWidget(), CompareTab)
+    assert area.count() == 3  # device + two files, no compare tab
+    assert any("share no address" in msg for _level, msg in logs)
+
+
+def test_file_to_file_bin_aligns_with_prompted_base(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    tab_a = _open_named_bin(area, tmp_path, "a.bin", b"\x00\xff\x02\x03")
+    hex_path = _hex_at(tmp_path / "b.hex", 0x0800_0000, b"\x00\x01\x02\x03")
+    tab_b = area.open_document(FirmwareDocument.open(hex_path))
+    # The .bin gets prompted for a base; aligning it onto the hex makes the two overlap.
+    area._ask_bin_base = lambda tab: 0x0800_0000
+    area._run_tab_compare(tab_a, tab_b)
+
+    compare = area.currentWidget()
+    assert isinstance(compare, CompareTab)
+    assert area.tabText(area.indexOf(compare)) == "Compare: a.bin ↔ b.hex"
+    bg = Qt.ItemDataRole.BackgroundRole
+    # Byte 1 (0xff vs 0x01) differs at 0x08000001 and is tinted.
+    assert compare._left._model.data(compare._left._model.index(0, 1), bg) is not None
+    assert compare._left._model.data(compare._left._model.index(0, 0), bg) is None
+
+
+def test_file_to_file_bin_base_cancel_aborts(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    tab_a = _open_named_bin(area, tmp_path, "a.bin", b"\x00\x01")
+    hex_path = _hex_at(tmp_path / "b.hex", 0x0800_0000, b"\x00\x01")
+    tab_b = area.open_document(FirmwareDocument.open(hex_path))
+    area._ask_bin_base = lambda tab: None  # user cancels the base-address prompt
+
+    area._run_tab_compare(tab_a, tab_b)
+    assert area.count() == 3  # no compare tab opened
+    assert not isinstance(area.currentWidget(), CompareTab)
+
+
+def test_compare_with_device_runs_memory_compare(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    _attach(controller, qtbot)
+    qtbot.wait(50)
+    tab = _open_diff_bin(area, tmp_path)
+    tab._ask_base_address = lambda: 0x0800_0000  # skip the modal base-address prompt
+    device = area.widget(0)
+
+    with qtbot.waitSignal(controller.compare_done, timeout=4000):
+        area._run_tab_compare(device, tab)  # device on the left, file on the right
+    qtbot.wait(20)
+    compare = area.currentWidget()
+    assert isinstance(compare, CompareTab)
+    assert area.tabText(area.indexOf(compare)).startswith("Compare: Device memory")
+
+
+def test_compare_pick_cancels_when_click_misses_tabs(qtbot, controller, temp_settings, tmp_path):
+    from PySide6.QtCore import QPointF
+
+    area = _workarea(qtbot, controller, temp_settings)
+    tab, _p = _open_bin(area, tmp_path)
+    area._begin_compare_pick(tab)
+    assert area._compare_source is tab
+
+    # A press that lands off every tab cancels the pick and opens nothing.
+    handled = area.eventFilter(area.tabBar(), _press(QPointF(-10, -10)))
+    assert handled is True
+    assert area._compare_source is None
+    assert area.count() == 2
+
+
+def test_compare_pick_click_on_tab_triggers_compare(qtbot, controller, temp_settings, tmp_path):
+    from PySide6.QtCore import QPointF
+
+    area = _workarea(qtbot, controller, temp_settings)
+    area.resize(700, 400)
+    area.show()
+    qtbot.wait(30)
+    tab_a = _open_named_bin(area, tmp_path, "a.bin", b"\x01\x02")
+    tab_b = _open_named_bin(area, tmp_path, "b.bin", b"\x01\xff")
+
+    area._begin_compare_pick(tab_a)
+    bar = area.tabBar()
+    center = bar.tabRect(area.indexOf(tab_b)).center()
+    handled = area.eventFilter(bar, _press(QPointF(center)))
+
+    assert handled is True
+    assert area._compare_source is None  # one-shot: pick is cleared
+    assert isinstance(area.currentWidget(), CompareTab)
+
+
+def test_closing_armed_source_cancels_pick(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    tab, _p = _open_bin(area, tmp_path)
+    area._begin_compare_pick(tab)
+    assert area.close_file_tab(tab) is True  # clean tab -> closes without a prompt
+    assert area._compare_source is None
+
+
+def test_closing_a_partner_tab_cancels_pick(qtbot, controller, temp_settings, tmp_path):
+    area = _workarea(qtbot, controller, temp_settings)
+    other = _open_named_bin(area, tmp_path, "x.bin", b"\x00")
+    area._begin_compare_pick(area.widget(0))  # arm on the (non-closable) device tab
+    assert area._compare_source is not None
+    # Removing any tab — not just the armed source — clears the stale pick.
+    area.close_file_tab(other)
+    assert area._compare_source is None
+
+
+def test_right_click_during_pick_cancels(qtbot, controller, temp_settings, tmp_path):
+    from PySide6.QtCore import QPointF
+
+    area = _workarea(qtbot, controller, temp_settings)
+    tab, _p = _open_bin(area, tmp_path)
+    area._begin_compare_pick(tab)
+    # A right press cancels the pick but is not consumed (so the context menu can still open).
+    handled = area.eventFilter(area.tabBar(), _press(QPointF(5, 5), Qt.MouseButton.RightButton))
+    assert handled is False
+    assert area._compare_source is None
+    assert area.count() == 2

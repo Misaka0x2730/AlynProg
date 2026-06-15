@@ -30,6 +30,13 @@ from alynprog.core.settings import Settings
 _FILE_FILTER = "Firmware (*.elf *.hex *.ihex *.bin);;All files (*)"
 
 
+def _format_sector_size(size: int) -> str:
+    """Sector size for display: plain bytes under 1 KiB (so 1020 B, not 0.996094 KiB), else KiB."""
+    if size < 1024:
+        return f"{size} B"
+    return f"{size / 1024:g} KiB"
+
+
 class ProgramPanel(QWidget):
     logMessage = Signal(str, str)
 
@@ -170,10 +177,9 @@ class ProgramPanel(QWidget):
         self._sector_list.clear()
         sectors = enumerate_sectors(list(regions))
         for sector in sectors:
-            size_kib = sector.size / 1024
             label = (
                 f"{sector.region_name} #{sector.index}  "
-                f"0x{sector.addr:08X}-0x{sector.end - 1:08X}  ({size_kib:g} KiB)"
+                f"0x{sector.addr:08X}-0x{sector.end - 1:08X}  ({_format_sector_size(sector.size)})"
             )
             item = QListWidgetItem(label)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)

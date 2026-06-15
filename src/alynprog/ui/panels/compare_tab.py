@@ -1,10 +1,10 @@
 """The side-by-side comparison result tab.
 
-When a file is compared against device memory the outcome opens here as its own tab: a horizontal
-split with the **device memory** on the left and the **file** on the right, both addressed
-identically and with the differing bytes tinted in each half. A header summarises the result and
-steps through the differences (scrolling is locked between the two halves, so the rows stay
-aligned).
+A comparison — a file against device memory, or two files against each other — opens here as its own
+tab: a horizontal split with the **left** operand on the left and the **right** operand on the
+right, both addressed identically and with the differing bytes tinted in each half. A header
+summarises the result and steps through the differences (scrolling is locked between the two halves,
+so the rows stay aligned).
 """
 
 from __future__ import annotations
@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 from alynprog.core.backend import MemoryRegion, RegionKind
 from alynprog.core.compare import MemoryCompareResult
 from alynprog.core.settings import Settings
+from alynprog.ui.panels.hexview.font import HexFontController
 from alynprog.ui.panels.hexview.sources import BufferSource
 from alynprog.ui.panels.hexview.view import HexPane
 
@@ -33,9 +34,10 @@ class _BufferPane(HexPane):
         self,
         segments: list[tuple[int, bytes]],
         settings: Settings | None = None,
+        font_controller: HexFontController | None = None,
         parent: QWidget | None = None,
     ) -> None:
-        super().__init__(settings, parent)
+        super().__init__(settings, font_controller, parent)
         self._source = BufferSource(segments, self)
         self._bind_source(self._source.request_page, self._source.write)
         self._source.page_ready.connect(self._model.fill_page)
@@ -53,27 +55,30 @@ class CompareTab(QWidget):
     def __init__(
         self,
         result: MemoryCompareResult,
-        file_label: str,
+        left_label: str,
+        right_label: str,
         settings: Settings | None = None,
+        font_controller: HexFontController | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
-        self._file_label = file_label
-        device_segments = [(seg.addr, seg.actual) for seg in result.segments]
-        file_segments = [(seg.addr, seg.expected) for seg in result.segments]
+        self._left_label = left_label
+        self._right_label = right_label
+        left_segments = [(seg.addr, seg.actual) for seg in result.segments]
+        right_segments = [(seg.addr, seg.expected) for seg in result.segments]
         highlights = [(d.addr, d.end) for seg in result.segments for d in seg.diffs]
         self._diff_addrs = sorted(d.addr for seg in result.segments for d in seg.diffs)
         self._diff_cursor = -1
 
-        self._device = _BufferPane(device_segments, settings, self)
-        self._file = _BufferPane(file_segments, settings, self)
-        self._device.set_highlight(highlights)
-        self._file.set_highlight(highlights)
-        self._device.sync_with(self._file)
+        self._left = _BufferPane(left_segments, settings, font_controller, self)
+        self._right = _BufferPane(right_segments, settings, font_controller, self)
+        self._left.set_highlight(highlights)
+        self._right.set_highlight(highlights)
+        self._left.sync_with(self._right)
 
         splitter = QSplitter(Qt.Orientation.Horizontal, self)
-        splitter.addWidget(self._titled(self.tr("Device memory"), self._device))
-        splitter.addWidget(self._titled(file_label, self._file))
+        splitter.addWidget(self._titled(left_label, self._left))
+        splitter.addWidget(self._titled(right_label, self._right))
         splitter.setSizes([1, 1])
 
         layout = QVBoxLayout(self)
@@ -81,8 +86,8 @@ class CompareTab(QWidget):
         layout.addWidget(splitter, 1)
 
     @staticmethod
-    def title_for(file_label: str) -> str:
-        return f"Compare: {file_label}"
+    def title_for(left_label: str, right_label: str) -> str:
+        return f"Compare: {left_label} ↔ {right_label}"
 
     # --- construction ----------------------------------------------------------
 
@@ -128,10 +133,10 @@ class CompareTab(QWidget):
         if not self._diff_addrs:
             return
         self._diff_cursor = min(self._diff_cursor + 1, len(self._diff_addrs) - 1)
-        self._device.goto_address(self._diff_addrs[self._diff_cursor])
+        self._left.goto_address(self._diff_addrs[self._diff_cursor])
 
     def _prev_diff(self) -> None:
         if not self._diff_addrs:
             return
         self._diff_cursor = max(self._diff_cursor - 1, 0)
-        self._device.goto_address(self._diff_addrs[self._diff_cursor])
+        self._left.goto_address(self._diff_addrs[self._diff_cursor])

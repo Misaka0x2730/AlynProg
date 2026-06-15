@@ -118,3 +118,29 @@ def compare_segment(
 ) -> SegmentCompare:
     ranges, truncated = diff_ranges(expected, actual, base, cap)
     return SegmentCompare(base, bytes(expected), bytes(actual), tuple(ranges), truncated)
+
+
+def compare_buffers(
+    left: list[tuple[int, bytes]],
+    right: list[tuple[int, bytes]],
+    cap: int = DEFAULT_DIFF_CAP,
+) -> MemoryCompareResult:
+    """Compare two address-tagged buffers over the address ranges they have in common.
+
+    Each maximal window where a *left* and a *right* segment overlap in address becomes one
+    :class:`SegmentCompare` — the left bytes as ``actual``, the right bytes as ``expected`` — so the
+    result drops straight into the same side-by-side view the device compare uses. Bytes that exist
+    on only one side are not compared (mirroring how the device compare clamps to the device map);
+    two buffers that share no address range yield an empty result.
+    """
+    segments: list[SegmentCompare] = []
+    for left_addr, left_data in left:
+        for right_addr, right_data in right:
+            lo = max(left_addr, right_addr)
+            hi = min(left_addr + len(left_data), right_addr + len(right_data))
+            if lo < hi:
+                actual = left_data[lo - left_addr : hi - left_addr]
+                expected = right_data[lo - right_addr : hi - right_addr]
+                segments.append(compare_segment(expected, actual, lo, cap))
+    segments.sort(key=lambda seg: seg.addr)
+    return MemoryCompareResult(tuple(segments))
